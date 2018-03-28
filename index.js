@@ -33,7 +33,7 @@ app.get('/destiel', (req, res, next) => {
 });
 
 app.get('/', (req, res, next) => {
-	res.sendFile('/home');
+	res.sendFile('./home.html');
 });
 
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */
