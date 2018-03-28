@@ -14,7 +14,7 @@ var app = express();
 var server = http.createServer(app);
 
 /* Defines what port to use to listen to web requests */
-var port =  process.env.PORT 
+var port =  process.env.PORT
 		? parseInt(process.env.PORT)
 		: 3235;
 
@@ -30,6 +30,10 @@ app.get('/form', (req, res, next) => {
 
 app.get('/destiel', (req, res, next) => {
 	res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');
+});
+
+app.get('/', (req, res, next) => {
+	res.sendFile('/home');
 });
 
 /* Defines what function to all when the server recieves any request from http://localhost:8080 */
