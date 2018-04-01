@@ -18,6 +18,7 @@ var port =  process.env.PORT
 		? parseInt(process.env.PORT)
 		: 3235;
 
+/* PATH SECTION */
 /* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
 app.get('/form', (req, res, next) => {
 
@@ -28,13 +29,20 @@ app.get('/form', (req, res, next) => {
 	res.sendFile(filePath);
 });
 
-app.get('/destiel', (req, res, next) => {
+app.get('/destielimage', (req, res, next) => {
 	res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');
 });
 
 app.get('/', (req, res, next) => {
 
 	var filePath = path.join(__dirname, './home.html')
+
+	res.sendFile(filePath);
+});
+
+app.get('/trial', (req, res, next) => {
+
+	var filePath = path.join(__dirname, './trial.html')
 
 	res.sendFile(filePath);
 });
