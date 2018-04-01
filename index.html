@@ -20,7 +20,7 @@
 		</div>
 
 		<div>
-			<a href="/trial">Home<a>
+			<a href="/trial">trial<a>
 		</div>
 		<!-- <div>
 			<label>Favorite Marvel character?</label>
@@ -31,4 +31,35 @@
 
 		</div>
 	</body>
+	<script>
+	function grabData() {
+
+	// Getting all the input tags
+	var $inputs = document.querySelectorAll('input');
+
+	// Defining a variable to store all the data
+	var data = {};
+
+	// Looping through all the input tags
+	for(var i = 0; i < $inputs.length; i++) {
+
+		// Getting the ith input tag
+		var $input = $inputs[i];
+
+		// Getting the name of the data that the input tag holds
+		var name = $input.name;
+
+		// Getting the value that the user entered into the input tag
+		var value = $input.value;
+
+		// Storing the value and its name
+		data[name] = value
+	}
+
+	// Outputting the data
+	return data
+}
+
+</script>
+
 </html>
