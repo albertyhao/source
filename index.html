@@ -5,6 +5,18 @@
 	</head>
 	<body>
 		<div>
+			<label>Name?</label>
+			<input type='text' name='name'>
+		<div>
+		<div>
+			<label>Username?</label>
+			<input type='text' name='username'>
+		<div>
+		<div>
+			<label>Password</label>
+			<input type='text' name='password'>
+		<div>
+		<div>
 			<label>Favorite Supernatural character?</label>
 			<input type='text' name='favoritespncharacter'>
 		<div>
@@ -32,6 +44,21 @@
 		</div>
 	</body>
 	<script>
+	var $inputs= document.querySelectorAll('input')
+	var $button= document.querySelectorAll('button')
+
+	$button.addEventLIstern('click',storeData)
+
+	function storeData () {
+		var data = {};
+		for(var i=0; i < $inputs.length; i++) {
+			var $inputs = $inputs[i];
+			data[$input.name] = $input.value
+		}
+		console.log(data);
+	}
+
+
 	function grabData() {
 
 	// Getting all the input tags
