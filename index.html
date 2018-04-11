@@ -15,7 +15,11 @@
 		<div>
 			<label>Password</label>
 			<input type='text' name='password'>
+		</div>
 		<div>
+			<label>Verify Password</label>
+			<input type='password' name='verifyPassword'>
+		</div>
 		<div>
 			<label>Favorite Supernatural character?</label>
 			<input type='text' name='favoritespncharacter'>
@@ -41,6 +45,17 @@
 		<script>
 
 		var $button= document.querySelector('button')
+
+		function verifyPassword() {
+
+		var $passwords = document.querySelectorAll('input[type="password"]');
+		var isSamePassword = $passwords[0].value === $passwords[1].value;
+		if(!isSamePassword) {
+			alert("Please enter the same password!")
+		}
+		return isSamePassword;
+
+		}
 
 		function storeData () {
 			var data = {};
