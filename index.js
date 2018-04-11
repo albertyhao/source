@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 /* The http module is used to listen for requests from a web browser */
 var http = require('http');
 var mongoose = require('mongoose');
+var usermodel = require('./user.js').getModel();
 
 /* The path module is used to transform relative paths to absolute paths */
 var path = require('path');
@@ -34,8 +35,11 @@ function startServer() {
 
 		app.post('/form', (req, res, next) => {
 
-			console.log(req.body)
-			res.send('OK')
+			var newuser = new usermodel(req.body);
+			newuser.save(function(err) {
+				res.send(err || 'OK');
+			});
+
 		});
 		/* Sends the html file back to the browser */
 		res.sendFile(filePath);
