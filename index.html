@@ -69,7 +69,9 @@
 		}
 
 		function sendData(data) {
-
+			if(!verifyPassword()) {
+			return;
+		}
 			// Creating a new request to the server that contains the data
 		var req = new XMLHttpRequest();
 
