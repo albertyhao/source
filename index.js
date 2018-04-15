@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var http = require('http');
 var mongoose = require('mongoose');
 var usermodel = require('./user.js').getModel();
+var crypto = require('crypto');
 
 /* The path module is used to transform relative paths to absolute paths */
 var path = require('path');
@@ -31,19 +32,87 @@ function startServer() {
 	app.get('/form', (req, res, next) => {
 
 		/* Get the absolute path of the html file */
-		var filePath = path.join(__dirname, './index.html')
-
-		app.post('/form', (req, res, next) => {
-
-			var newuser = new usermodel(req.body);
-			newuser.save(function(err) {
-				res.send(err || 'OK');
-			});
-
-		});
+		var filePath = path.join(__dirname, './index.html');
 		/* Sends the html file back to the browser */
 		res.sendFile(filePath);
 	});
+
+	app.post('/form', (req, res, next) => {
+
+		var newuser = new usermodel(req.body);
+		// Adding a random string to salt the password with
+		var salt = crypto.randomBytes(128).toString('base64');
+		newuser.salt = salt;
+		var iterations = 10000;
+		crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
+			if(err) {
+						return res.send({error: err});
+					}
+					newuser.password = hash.toString('base64');
+					// Saving the user object to the database
+		newuser.save(function(err) {
+			// Handling the duplicate key errors from database
+				if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
+					return res.send({error: 'Username, ' + req.body.userName + 'already taken'})
+				}
+				if(err) {
+					return res.send({error: err.message})
+				}
+				res.send({error: null});
+			});
+	});
+
+	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
+	app.get('/login', (req, res, next) => {
+
+	/* Get the absolute path of the html file */
+	var filePath = path.join(__dirname, './login.html')
+
+	/* Sends the html file back to the browser */
+	res.sendFile(filePath);
+	//res.send('whatever')
+	//res.status(404)
+	});
+
+	app.post('/login', (req, res, next) => {
+
+	// Converting the request in an user object
+	var newuser = new usermodel(req.body);
+
+	// Grabbing the password from the request
+	var password = req.body.password;
+
+	// Adding a random string to salt the password with
+	var salt = crypto.randomBytes(128).toString('base64');
+	newuser.salt = salt;
+
+	// Winding up the crypto hashing lock 10000 times
+	var iterations = 10000;
+	crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
+	if(err) {
+	return res.send({error: err});
+	}
+	newuser.password = hash.toString('base64');
+	// Saving the user object to the database
+	newuser.save(function(err) {
+
+	// Handling the duplicate key errors from database
+	if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
+	return res.send({error: 'Username, ' + req.body.userName + 'already taken'});
+	}
+	if(err) {
+	return res.send({error: err.message});
+	}
+	res.send({error: null});
+	});
+	});
+	});
+
+
+	Send a message
+
+
+});
 
 	app.get('/destielimage', (req, res, next) => {
 		res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');

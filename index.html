@@ -2,6 +2,16 @@
 <html>
 	<head>
 		<title>SPN</title>
+		<style>
+			body {
+				background-image: url('https://nerdist.com/wp-content/uploads/2014/10/Sam-and-Dean-Winchester_featured.jpg');
+				background-size: cover;
+			}
+
+			label {
+				color: white;
+			}
+		</style>
 	</head>
 	<body>
 		<div>
@@ -49,7 +59,7 @@
 		function verifyPassword() {
 
 		var $passwords = document.querySelectorAll('input[type="password"]');
-		var isSamePassword = $passwords[0].value === $passwords[1].value;
+		var $isSamePassword = $passwords[0].value === $passwords[1].value;
 		if(!isSamePassword) {
 			alert("Please enter the same password!")
 		}
@@ -70,6 +80,17 @@
 
 		function sendData(data) {
 			if(!verifyPassword()) {
+				// Alert the user to any errors from the server
+				function readyStateChange() {
+					if(req.readyState !== 4) return;
+					if(req.status !== 200) return;
+
+					data = JSON.parse(req.responseText);
+					if(data.error) {
+					alert(data.error);
+				}
+			}
+req.onreadystatechange = readyStateChange;
 			return;
 		}
 			// Creating a new request to the server that contains the data

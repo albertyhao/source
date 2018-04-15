@@ -7,6 +7,8 @@ var model = mongoose.model('user', new mongoose.Schema({
 	, favoritespncharacter: {type: String}
 	, leastfavoritespncharacter: {type: String}
 	, favoratespnvillian: {type: String}
+	, salt: {type: String}
+
 }));
 
 exports.getModel = function() {
