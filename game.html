@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <script src="//static.codepen.io/assets/editor/live/console_runner-ce3034e6bde3912cc25f83cccb7caa2b0f976196f2f2d52303a462c826d54a73.js"></script><script src="//static.codepen.io/assets/editor/live/css_live_reload_init-890dc39bb89183d4642d58b1ae5376a0193342f9aed88ea04330dc14c8d52f55.js"></script><meta charset="UTF-8"><meta name="robots" content="noindex"><link rel="shortcut icon" type="image/x-icon" href="//static.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico"><link rel="mask-icon" type="" href="//static.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111"><link rel="canonical" href="https://codepen.io/dangodev/pen/yMwGLv?page=1&amp;">
+
+  <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  <style class="cp-pen-styles">
+
+  canvas {
+  height: 100%;
+  width: 100%;
+  }
+  .crosshair {
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  top: 50%;
+  pointer-events: none;
+  position: absolute;
+  z-index: 100
+  }
+  .crosshair::before,
+  .crosshair::after {
+  background-color: black;
+  content: "";
+  display: block;
+  height: 0.1vw;
+  width: 2vw;
+  }
+  .crosshair::after {
+  -webkit-transform: rotate(-0.25turn);
+          transform: rotate(-0.25turn);
+  }
+
+  .directions {
+  bottom: 0;
+  color: black;
+  font-family: Menlo, monospace;
+  font-size: 10px;
+  left: 0;
+  padding-bottom: 10px;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  z-index: 100;
+  }
+
+/* chatting */
+#chat {
+				position:fixed;
+				right: 2vw;
+				bottom: 2vh;
+				width:28vw;
+				height:80vh;
+			}
+
+			#chat button {
+				position:absolute;
+				right:2vw;
+				bottom:2vh;
+				width:1vw;
+				font-size:2vmax;
+				width:1em;
+				height:1em;
+				outline:none;
+				border:none;
+				cursor:pointer;
+				background-color:transparent;
+			}
+
+			#chat button:hover {
+				font-size:2.2vmax;
+			}
+
+			#chat input {
+				position:absolute;
+				right:5vw;
+				bottom:1.5vh;
+				width:20vw;
+				font-size:1.5vmax;
+				padding:0.5vmax;
+				color:white;
+				background-color:transparent;
+			}
+
+  </style>
+  </head>
+  <body>
+
+    <div id='chat'>
+    	<ul></ul>
+    		<div>
+    			<input type='text'>
+    				<button>🚀</button>
+    		</div>
+    </div>
+
+    <div class="crosshair"></div>
+    <div class="directions">W / A / S / D to move; click to shoot</div>
+
+    <script src="//static.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+    <script src="/js/socket.io.dev.js"></script>
+
+  <script>
+
+  // Sockets
+  var socket = io();
+  var $canvas = document.querySelector('canvas');
+			$canvas.width = window.screen.width;
+			$canvas.height = window.screen.height;
+
+
+  // Fates
+  var grid = 30;
+  var goonCount = 3;
+  var bulletSpeed = 0.75;
+
+// World
+  var bullets = []; // Bullet tracker
+  var goons = []; // Goon tracker
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xfff2de);
+  var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 10, 0);
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+  var lights = [];
+  lights[0] = new THREE.AmbientLight(0xfffff, 0.5);
+  lights[0].position.set(0, 100, 0);
+  lights[1] = new THREE.PointLight(0xffffff, 1, 1000, 2);
+  lights[1].position.set(100, 100, 100);
+  lights[2] = new THREE.PointLight(0xffffff, 1, 1000, 2);
+  lights[2].position.set(-50, 100, -200);
+  scene.add(lights[0], lights[1], lights[2]);
+
+  for (var row = 0; row < grid; row++) {
+  // Probably a better way to set this up than boxes…
+  for (var column = 0; column < grid; column++) {
+    var color = row % 2 === 0 && column % 2 === 0 || row % 2 === 1 && column % 2 === 1 ? 0xffc0ff : 0x00ffff;
+    var geometry = new THREE.BoxBufferGeometry(5, 1, 5);
+    var material = new THREE.MeshPhongMaterial({ color: color, shininess: 100 });
+    var tile = new THREE.Mesh(geometry, material);
+    tile.position.x = column * 5 - grid * 5 / 2;
+    tile.position.z = row * 5 - grid * 5 / 2;
+    scene.add(tile);
+  }
+}
+
+// Hero
+
+// Enemies
+  var addGoon = function addGoon() {
+  // Called whenever a good goon goes down
+  var goon = new THREE.Mesh(new THREE.CylinderBufferGeometry(1.5, 1.5, 12), new THREE.MeshPhongMaterial({ color: 0x0000ff, shininess: 100 }));
+  goon.position.set(5 * grid * Math.random() - grid * 5 / 2, 6, 5 * grid * Math.random() - grid * 5 / 2);
+  goons.push(goon);
+  scene.add(goon);
+  };
+
+  for (var i = 0; i < goonCount; i++) {
+  // set up 3 goons initially
+  addGoon();
+  }
+
+// Weapons
+  var keyMap = new Map();
+  var resizeHandler = function resizeHandler() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
+window.addEventListener('resize', resizeHandler);
+
+  var keyHandler = function keyHandler(event) {
+  keyMap.set(event.keyCode, event.type === 'keydown'); // -> http://stackoverflow.com/questions/5203407/javascript-multiple-keys-pressed-at-once
+};
+  document.addEventListener('keydown', keyHandler);
+  document.addEventListener('keyup', keyHandler);
+
+  var mouseHandler = function mouseHandler(event) {
+  // only looks left/right, not up/down
+  camera.rotation.y = -2 * Math.PI * (event.clientX - window.innerWidth / 2) / window.innerWidth;
+};
+window.addEventListener('mousemove', mouseHandler);
+
+  var clickHandler = function clickHandler(event) {
+  // places a bullet; render() handles the animation
+  var bullet = new THREE.Mesh(new THREE.SphereBufferGeometry(0.25), new THREE.MeshPhongMaterial({ color: 0xff20f0, shininess: 100 }));
+  bullet.position.set(camera.position.x, 10, camera.position.z);
+  scene.add(bullet);
+  bullets.push({
+    object: bullet,
+    angle: camera.rotation.y
+    });
+  };
+  document.addEventListener('mousedown', clickHandler);
+
+// Action
+  var render = function render() {
+  var frame = requestAnimationFrame(render);
+
+  if (keyMap.get(87)) {
+    // Forward is easy—just straight cos() and sin().
+    camera.position.z -= 0.1 * Math.cos(camera.rotation.y);
+    camera.position.x -= 0.1 * Math.sin(camera.rotation.y);
+  }
+  if (keyMap.get(65)) {
+    // Sideways is hard; you’d think you could just switch cos() and sin(). But actually you keep everything the same but add 90°
+    camera.position.z -= 0.1 * Math.cos(camera.rotation.y + 0.5 * Math.PI);
+    camera.position.x -= 0.1 * Math.sin(camera.rotation.y + 0.5 * Math.PI);
+  }
+  if (keyMap.get(83)) {
+    // Backward is easy too; just reverse forward
+    camera.position.z += 0.1 * Math.cos(camera.rotation.y);
+    camera.position.x += 0.1 * Math.sin(camera.rotation.y);
+  }
+  if (keyMap.get(68)) {
+    // Other sideways is just subtracting 90°
+    camera.position.z -= 0.1 * Math.cos(camera.rotation.y - 0.5 * Math.PI);
+    camera.position.x -= 0.1 * Math.sin(camera.rotation.y - 0.5 * Math.PI);
+  }
+
+  bullets.forEach(function (bullet, i) {
+    if (!bullet || !bullet.object || !bullet.angle) return false;
+    bullet.object.position.set( // Animate bullet
+    bullet.object.position.x - Math.sin(bullet.angle) * bulletSpeed, 10, bullet.object.position.z - Math.cos(bullet.angle) * bulletSpeed);
+
+    goons.forEach(function (goon, g) {
+      // Home-brewed collision detection, one per goon. We can ignore the Y axis.
+      if (bullet.object.position.x - 1 > goon.position.x - 2.5 && bullet.object.position.x + 1 < goon.position.x + 2.5 && bullet.object.position.z - 1 > goon.position.z - 2.5 && bullet.object.position.z + 1 < goon.position.z + 2.5) {
+        // If bullet intersects goonspace, then derez both
+        scene.remove(goon);
+        goons.splice(g, 1);
+        scene.remove(bullet.object);
+        bullets.splice(i, 1);
+        addGoon();
+      }
+    });
+
+    if ( // Save memory by deleting bullets that have travelled outside the grid
+    bullet.object.position.x >= grid * 2.5 || bullet.object.position.x <= grid * -2.5 || bullet.object.position.z >= grid * 2.5 || bullet.object.position.z <= grid * -2.5) {
+      scene.remove(bullet.object);
+      bullets.splice(i, 1);
+    }
+  });
+
+  renderer.render(scene, camera);
+};
+
+  render();
+//# sourceURL=pen.js
+  </script>
+  <canvas width="934" height="327" style="width: 934px; height: 327px;"></canvas>
+</body>
+</html>

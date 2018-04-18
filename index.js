@@ -6,7 +6,7 @@ var http = require('http');
 var mongoose = require('mongoose');
 var usermodel = require('./user.js').getModel();
 var crypto = require('crypto');
-
+var Io = require('socket.io');
 /* The path module is used to transform relative paths to absolute paths */
 var path = require('path');
 
@@ -15,6 +15,7 @@ var app = express();
 
 /* Creates the web server */
 var server = http.createServer(app);
+var io = Io(server);
 
 /* Defines what port to use to listen to web requests */
 var port =  process.env.PORT
@@ -23,9 +24,25 @@ var port =  process.env.PORT
 
 var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/TFW';
 
+function addSockets() {
+	io.on('connection', (socket) => {
+
+		console.log('user connected');
+
+		socket.on('disconnect', () => {
+			console.log('user disconnected');
+		})
+	})
+}
+
+
+
 function startServer() {
 
+	addSockets();
+
 	app.use(bodyParser.json({ limit: '16mb' }));
+	app.use(express.static(path.join(__dirname, "public")));
 
 	/* PATH SECTION */
 	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
@@ -61,58 +78,55 @@ function startServer() {
 				res.send({error: null});
 			});
 	});
+});
 
 	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
 	app.get('/login', (req, res, next) => {
 
-	/* Get the absolute path of the html file */
-	var filePath = path.join(__dirname, './login.html')
+		/* Get the absolute path of the html file */
+		var filePath = path.join(__dirname, './login.html')
 
-	/* Sends the html file back to the browser */
-	res.sendFile(filePath);
-	//res.send('whatever')
-	//res.status(404)
+		/* Sends the html file back to the browser */
+		res.sendFile(filePath);
+		//res.send('whatever')
+		//res.status(404)
 	});
 
-	app.post('/login', (req, res, next) => {
-
-	// Converting the request in an user object
-	var newuser = new usermodel(req.body);
-
-	// Grabbing the password from the request
-	var password = req.body.password;
-
-	// Adding a random string to salt the password with
-	var salt = crypto.randomBytes(128).toString('base64');
-	newuser.salt = salt;
-
-	// Winding up the crypto hashing lock 10000 times
-	var iterations = 10000;
-	crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
-	if(err) {
-	return res.send({error: err});
-	}
-	newuser.password = hash.toString('base64');
-	// Saving the user object to the database
-	newuser.save(function(err) {
-
-	// Handling the duplicate key errors from database
-	if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
-	return res.send({error: 'Username, ' + req.body.userName + 'already taken'});
-	}
-	if(err) {
-	return res.send({error: err.message});
-	}
-	res.send({error: null});
-	});
-	});
-	});
-
-
-	Send a message
-
-
-});
+// 	app.post('/login', (req, res, next) => {
+//
+// 		// Converting the request in an user object
+// 		var newuser = new usermodel(req.body);
+//
+// 		// Grabbing the password from the request
+// 		var password = req.body.password;
+//
+// 		// Adding a random string to salt the password with
+// 		var salt = crypto.randomBytes(128).toString('base64');
+// 		newuser.salt = salt;
+//
+// 		// Winding up the crypto hashing lock 10000 times
+// 		var iterations = 10000;
+// 		crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
+// 		if(err) {
+// 		return res.send({error: err});
+// 		}
+// 		newuser.password = hash.toString('base64');
+// 		// Saving the user object to the database
+// 		newuser.save(function(err) {
+//
+// 		// Handling the duplicate key errors from database
+// 		if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
+// 		return res.send({error: 'Username, ' + req.body.userName + 'already taken'});
+// 		}
+// 		if(err) {
+// 		return res.send({error: err.message});
+// 		}
+// 		res.send({error: null});
+// 	});
+// 	});
+// 	});
+//
+// });
 
 	app.get('/destielimage', (req, res, next) => {
 		res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');
@@ -130,6 +144,13 @@ function startServer() {
 		var filePath = path.join(__dirname, './trial.html')
 
 		res.sendFile(filePath);
+	});
+
+	app.get('/game', (req, res, next) => {
+
+		var filePath = path.join(__dirname, './game.html')
+		res.sendFile(filePath);
+
 	});
 
 	/* Defines what function to all when the server recieves any request from http://localhost:8080 */
