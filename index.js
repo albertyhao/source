@@ -41,6 +41,20 @@ function startServer() {
 
 	addSockets();
 
+	function verifyUser(username, password, callback) {
+		if(!username) return callback('No username given');
+		if(!password) return callback('No password given');
+			usermodel.findOne({userName: username}, (err, user) => {
+		if(err) return callback('Error connecting to database');
+		if(!user) return callback('Incorrect username');
+			crypto.pbkdf2(password, user.salt, 10000, 256, 'sha256', (err, resp) => {
+			if(err) return callback('Error handling password');
+			if(resp.toString('base64') === user.password) return callback(null);
+			callback('Incorrect password');
+		});
+		});
+	}
+
 	app.use(bodyParser.json({ limit: '16mb' }));
 	app.use(express.static(path.join(__dirname, "public")));
 
@@ -57,6 +71,7 @@ function startServer() {
 	app.post('/form', (req, res, next) => {
 
 		var newuser = new usermodel(req.body);
+		var password = req.body.password;
 		// Adding a random string to salt the password with
 		var salt = crypto.randomBytes(128).toString('base64');
 		newuser.salt = salt;
@@ -67,18 +82,18 @@ function startServer() {
 					}
 					newuser.password = hash.toString('base64');
 					// Saving the user object to the database
-		newuser.save(function(err) {
-			// Handling the duplicate key errors from database
-				if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
-					return res.send({error: 'Username, ' + req.body.userName + 'already taken'})
-				}
-				if(err) {
-					return res.send({error: err.message})
-				}
-				res.send({error: null});
+			newuser.save(function(err) {
+				// Handling the duplicate key errors from database
+					if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
+						return res.send({error: 'Username, ' + req.body.userName + 'already taken'})
+					}
+					if(err) {
+						return res.send({error: err.message})
+					}
+					res.send({error: null});
+				});
 			});
 	});
-});
 
 	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
 	app.get('/login', (req, res, next) => {
@@ -92,41 +107,13 @@ function startServer() {
 		//res.status(404)
 	});
 
-// 	app.post('/login', (req, res, next) => {
-//
-// 		// Converting the request in an user object
-// 		var newuser = new usermodel(req.body);
-//
-// 		// Grabbing the password from the request
-// 		var password = req.body.password;
-//
-// 		// Adding a random string to salt the password with
-// 		var salt = crypto.randomBytes(128).toString('base64');
-// 		newuser.salt = salt;
-//
-// 		// Winding up the crypto hashing lock 10000 times
-// 		var iterations = 10000;
-// 		crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
-// 		if(err) {
-// 		return res.send({error: err});
-// 		}
-// 		newuser.password = hash.toString('base64');
-// 		// Saving the user object to the database
-// 		newuser.save(function(err) {
-//
-// 		// Handling the duplicate key errors from database
-// 		if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
-// 		return res.send({error: 'Username, ' + req.body.userName + 'already taken'});
-// 		}
-// 		if(err) {
-// 		return res.send({error: err.message});
-// 		}
-// 		res.send({error: null});
-// 	});
-// 	});
-// 	});
-//
-// });
+	app.post('/login', (req, res, next) => {
+		var username = req.body.userName;
+		var password = req.body.password;
+		verifyUser(username, password, (error) => {
+			res.send({error})
+		})
+	});
 
 	app.get('/destielimage', (req, res, next) => {
 		res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');
