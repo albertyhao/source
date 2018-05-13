@@ -51,15 +51,14 @@ function startServer() {
 
 	addSockets();
 
-	function authenticateUser(username, password, callback) {
-		if(!username) return callback('No username given');
+	if(!username) return callback('No username given');
 		if(!password) return callback('No password given');
-			usermodel.findOne({username: username}, (err, user) => {
-		if(err) return callback('Error connecting to database');
-		if(!user) return callback('Incorrect username');
+		usermodel.findOne({username: username}, (err, user) => {
+			if(err) return callback('Error connecting to database');
+			if(!user) return callback('No user found');
 			crypto.pbkdf2(password, user.salt, 10000, 256, 'sha256', (err, resp) => {
 				if(err) return callback('Error handling password');
-				if(resp.toString('base64') === user.password) return callback("Wrong password");
+				if(resp.toString('base64') === user.password) return callback('Wrong password');
 				callback(null, user);
 			});
 		});
