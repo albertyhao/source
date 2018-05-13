@@ -5,14 +5,15 @@
 <style>
 
 
-$blue: #5D92BA;
-$heading-font: 'Tenor Sans', sans-serif;
+/* $blue: #5D92BA;
+$heading-font: 'Tenor Sans', sans-serif; */
 
 
 html{
   background-color: $blue;
   font-family: $heading-font
 }
+
 .container{
   width: 500px;
   height: 400px;
@@ -73,10 +74,10 @@ html{
 /* for the season 9 video */
 #myVideo {
     position: fixed;
+    top: -40px;
+    left: 0;
     right: 0;
     bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
 }
 
 </style>
@@ -90,13 +91,11 @@ html{
   <div class="container">
     <div class="login">
     	<h1 class="login-heading" style="color: black">Login.</h1>
-        <form method="post">
           <input type="text" name="username" placeholder="Username" required="required" class="input-txt" />
           <input type="password" name="password" placeholder="Password" required="required" class="input-txt" />
           <div class="login-footer">
-            <button class="btn btn--right">Sign in</button>
+            <button class="btn btn--right">Login</button>
           </div>
-        </form>
     </div>
   </div>
 
@@ -112,7 +111,6 @@ html{
   setTimeout(function() {
     $video.style.display = "none";
   }, 6*1000);
-
 
   function storeData() {
     var data = {};
@@ -167,6 +165,7 @@ html{
       data = JSON.parse(req.responseText);
       if(data.error) {
         alert(data.error);
+        return;
       }
       window.location.href = "/game";
     }

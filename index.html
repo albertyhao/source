@@ -55,13 +55,13 @@
 			  font-weight: 200;
 			}
 
-			form {
+			.form {
 			  padding: 20px 0;
 			  position: relative;
 			  z-index: 2;
 			}
 
-			form input {
+			.form input {
 			  appearance: none;
 			  outline: 0;
 			  border: 1px solid rgba(255, 255, 255, 0.4);
@@ -78,15 +78,15 @@
 			  transition-duration: 0.25s;
 			  font-weight: 300;
 			}
-			form input:hover {
+			.form input:hover {
 			  background-color: rgba(255, 255, 255, 0.4);
 			}
-			form input:focus {
+			.form input:focus {
 			  background-color: white;
 			  width: 300px;
 			  color: black;
 			}
-			form button {
+			.form button {
 			  appearance: none;
 			  outline: 0;
 			  background-color: white;
@@ -158,6 +158,10 @@
 			    transform: translateY(-700px) rotate(600deg);
 			  }
 			}
+
+			#Avator img {
+				width: 100px;
+			}
 		</style>
 	</head>
 
@@ -165,12 +169,14 @@
 		<div>
 			<div class="container">
 				<h1>Welcome</h1>
-				<form class="form">
+				<div class="form">
 					<input type="text" name="username" placeholder="Username">
 					<input type="password" name="password" placeholder="Password">
 					<input type="password" name="verifyPassword" placeholder="Verify Password">
+					<input type="file" accept="image/*" name="Avator" placeholder="Avatar">
+					<div id='Avator'></div>
 					<button>Sign Up</button>
-				</form>
+				</div>
 			</div>
 		</div>
 
@@ -184,6 +190,23 @@
 
 
 		<script>
+		var imageData;
+		var $character = document.querySelector('input[name=Avator]');
+		var $prevImg = document.querySelector('#Avator')
+		$character.addEventListener('change', grabAvator);
+
+		function grabAvator() {
+			var fileReader = new FileReader();
+			fileReader.onload = function(e) {
+				var $img = document.createElement('img');
+				imageData = e.target.result;
+				$img.src = imageData;
+				$prevImg.innerHTML = '';
+				$prevImg.appendChild($img);
+			}
+			fileReader.readAsDataURL($character.files[0]);
+		}
+
 		function verifyPassword() {
 			var $passwords = document.querySelectorAll('input[type="password"]');
 			var isSamePassword = $passwords[0].value === $passwords[1].value;
@@ -208,24 +231,22 @@
 				if($input.type === 'text' || $input.type === 'password') {
 					data[$input.name] = $input.value;
 				}
-				else if ($input.type === 'checkbox') {
-					data[$input.name] = $input.checked;
+				else if ($input.type === 'file') {
+					data[$input.name] = imageData;
 				}
-				else if ($input.type === 'radio' && $input.checked) {
-					data[$input.name] = $input.getAttribute('answer');
-				}
+
 			}
 
-			for(var i = 0; i < $inputs.length; i++) {
-				var $input = $inputs[i];
-				if($input.type === 'text' || $input.type === 'password') {
-					data[$input.name] =  $input.value;
-				} else if($input.type === 'checkbox') {
-					data[$input.name] =  $input.checked;
-				} else if ($input.type === 'radio' && $input.checked) {
-					data[$input.name] = $input.getAttribute('answer');
-				}
-			}
+			// for(var i = 0; i < $inputs.length; i++) {
+			// 	var $input = $inputs[i];
+			// 	if($input.type === 'text' || $input.type === 'password') {
+			// 		data[$input.name] =  $input.value;
+			// 	} else if($input.type === 'checkbox') {
+			// 		data[$input.name] =  $input.checked;
+			// 	} else if ($input.type === 'radio' && $input.checked) {
+			// 		data[$input.name] = $input.getAttribute('answer');
+			// 	}
+			// }
 
 			sendData(data);
 		}
@@ -245,9 +266,9 @@
 				if(req.readyState !== 4) return;
 				if(req.status !== 200) return;
 
-				data = JSON.parse(req.responseText);
+				var body = JSON.parse(req.responseText);
 				if(data.error) {
-					alert(data.error);
+					return alert(data.error);
 				}
 				window.location.href = "/game";
 			}

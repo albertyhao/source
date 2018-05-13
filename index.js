@@ -7,6 +7,12 @@ var mongoose = require('mongoose');
 var usermodel = require('./user.js').getModel();
 var crypto = require('crypto');
 var Io = require('socket.io');
+var usermodel = require('./user.js').getModel();
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var session = require('express-session');
+var fs = require('fs');
+
 /* The path module is used to transform relative paths to absolute paths */
 var path = require('path');
 
@@ -26,11 +32,15 @@ var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/TFW';
 
 function addSockets() {
 	io.on('connection', (socket) => {
-
-		console.log('user connected');
+		var user = socket.handshake.query.user;
+		io.emit('new message', {username: user, message: 'Welcome to the Family Business.'})
+		//io.emit("new message", 'user connected');
+		socket.on("message", (message) => {
+			io.emit("new message", message)
+		})
 
 		socket.on('disconnect', () => {
-			console.log('user disconnected');
+			io.emit("new message", 'user disconnected');
 		})
 	})
 }
@@ -41,15 +51,15 @@ function startServer() {
 
 	addSockets();
 
-	function verifyUser(username, password, callback) {
+	function authenticateUser(username, password, callback) {
 		if(!username) return callback('No username given');
 		if(!password) return callback('No password given');
-			usermodel.findOne({userName: username}, (err, user) => {
+			usermodel.findOne({username: username}, (err, user) => {
 		if(err) return callback('Error connecting to database');
 		if(!user) return callback('Incorrect username');
 			crypto.pbkdf2(password, user.salt, 10000, 256, 'sha256', (err, resp) => {
 			if(err) return callback('Error handling password');
-			if(resp.toString('base64') === user.password) return callback(null);
+			if(resp.toString('base64') === user.password) return callback(null, user);
 			callback('Incorrect password');
 		});
 		});
@@ -57,6 +67,24 @@ function startServer() {
 
 	app.use(bodyParser.json({ limit: '16mb' }));
 	app.use(express.static(path.join(__dirname, "public")));
+	app.use(session({secret: 'wakandaforever'}));
+	app.use(passport.initialize());
+	app.use(passport.session());
+
+	passport.use(new LocalStrategy({
+		usernameField: 'username'
+		, passwordField: 'password'
+	}, authenticateUser));
+
+	passport.serializeUser(function(user, done) {
+		done(null, user.id);
+	});
+
+	passport.deserializeUser(function(id, done) {
+		usermodel.findById(id, function(err, user){
+			done(err, user);
+		});
+	});
 
 	/* PATH SECTION */
 	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
@@ -90,8 +118,15 @@ function startServer() {
 					if(err) {
 						return res.send({error: err.message})
 					}
-					res.send({error: null});
-				});
+					passport.authenticate('local', function(err, user) {
+
+						if(err) return res.send({error: err});
+						req.logIn(user, (err) => {
+							if(err) return res.send({error: err});
+							res.send({error: null});
+						});
+
+					})(req, res, next)});
 			});
 	});
 
@@ -107,13 +142,26 @@ function startServer() {
 		//res.status(404)
 	});
 
-	app.post('/login', (req, res, next) => {
-		var username = req.body.userName;
-		var password = req.body.password;
-		verifyUser(username, password, (error) => {
-			res.send({error})
-		})
+	app.get('/login', (req, res, next) => {
+
+	})
+
+	app.get('/logout', (req, res, next) => {
+		req.logOut();
+		res.redirect('/login');
 	});
+
+	app.post('/login', (req, res, next) => {
+		var username = req.body.username;
+		var password = req.body.password;
+		passport.authenticate('local', function(err, user) {
+			if(err) return res.send({error: err});
+			req.logIn(user, (err) => {
+				if(err) res.send({error:err})
+					res.send({error: null});
+				});
+			}) (req, res, next);
+		});
 
 	app.get('/destielimage', (req, res, next) => {
 		res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');
@@ -134,8 +182,17 @@ function startServer() {
 	});
 
 	app.get('/game', (req, res, next) => {
-
+		if(!req.user) return res.redirect('/login');
 		var filePath = path.join(__dirname, './game.html')
+		var fileContents = fs.readFileSync(filePath, 'utf8')
+		fileContents = fileContents.replace('{{USERNAME}}', req.user.username);
+		res.send(fileContents);
+
+	});
+
+	app.get('/bb', (req, res, next) => {
+		if(!req.user) res.redirect('/login');
+		var filePath = path.join(__dirname, './public/game/bb.html')
 		res.sendFile(filePath);
 
 	});
