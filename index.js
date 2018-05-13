@@ -112,8 +112,8 @@ function startServer() {
 					// Saving the user object to the database
 			newuser.save(function(err) {
 				// Handling the duplicate key errors from database
-					if(err && err.message.includes('duplicate key error') && err.message.includes('userName')) {
-						return res.send({error: 'Username, ' + req.body.userName + 'already taken'})
+					if(err && err.message.includes('duplicate key error') && err.message.includes('username')) {
+						return res.send({error: 'username, ' + req.body.username + 'already taken'})
 					}
 					if(err) {
 						return res.send({error: err.message})
