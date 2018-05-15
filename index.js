@@ -188,12 +188,12 @@ function startServer() {
 
 	});
 
-	app.get('/bb', (req, res, next) => {
-		if(!req.user) res.redirect('/login');
-		var filePath = path.join(__dirname, './public/game/bb.html')
-		res.sendFile(filePath);
-
-	});
+	// app.get('/bb', (req, res, next) => {
+	// 	if(!req.user) res.redirect('/login');
+	// 	var filePath = path.join(__dirname, './public/game/bb.html')
+	// 	res.sendFile(filePath);
+	//
+	// });
 
 	/* Defines what function to all when the server recieves any request from http://localhost:8080 */
 	server.on('listening', () => {
