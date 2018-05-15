@@ -51,6 +51,7 @@ function startServer() {
 
 	addSockets();
 
+	function authenticateUser(username, password, callback) {
 	if(!username) return callback('No username given');
 		if(!password) return callback('No password given');
 		usermodel.findOne({username: username}, (err, user) => {
@@ -73,7 +74,8 @@ function startServer() {
 	passport.use(new LocalStrategy({
 		usernameField: 'username'
 		, passwordField: 'password'
-	}, authenticateUser));
+	},
+	authenticateUser));
 
 	passport.serializeUser(function(user, done) {
 		done(null, user.id);
@@ -103,6 +105,7 @@ function startServer() {
 		var salt = crypto.randomBytes(128).toString('base64');
 		newuser.salt = salt;
 		var iterations = 10000;
+
 		crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
 			if(err) {
 						return res.send({error: err});
@@ -208,6 +211,7 @@ function startServer() {
 
 	/* Tells the server to start listening to requests from defined port */
 	server.listen(port);
-};
 
-mongoose.connect(dbAddress, startServer)
+mongoose.connect(dbAddress, startServer);
+
+};
