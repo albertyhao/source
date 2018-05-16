@@ -45,7 +45,7 @@ function createNewPlayer(playerName) {
 function drawPlayers() {
 
  var playerNames = Object.keys(gamePieces);
- var pieceWidth = Math.min($canvas.width, $canvas.height) / 25;
+ var pieceWidth = Math.min($canvas.width, $canvas.height) / 10;
  playerNames.forEach(function(playerName) {
    var gamePiece = gamePieces[playerName];
    if(!gamePiece.loaded) return;
