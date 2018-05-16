@@ -65,6 +65,7 @@ function animate() {
 function updatePlayerPosition(e) {
 
  var gamePiece = gamePieces[user];
+ var step = 50;
  switch(e.key) {
    case 'ArrowLeft':
      gamePiece.x-= step;
