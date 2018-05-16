@@ -31,9 +31,21 @@ var port =  process.env.PORT
 var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/TFW';
 
 function addSockets() {
+	var players = {};
+
 	io.on('connection', (socket) => {
 		var user = socket.handshake.query.user;
-		io.emit('new message', {username: user, message: 'Welcome to the Family Business.'})
+		if(players[user]) return;
+		players[user] = {
+			x: 0, y:0
+		}
+		io.emit('playerUpdate', players);
+		io.emit('new message', {username: user, message: `Welcome ${user} to the Family Business.`})
+		socket.on('disconnect', () => {
+			delete players[user];
+			io.emit('playerUpdate', players);
+			io.emit('newMessage', {username: user, message: `${user} died, but death ain\'t always goodbye.`})
+		})
 		//io.emit("new message", 'user connected');
 		socket.on("message", (message) => {
 			io.emit("new message", message)
@@ -41,8 +53,16 @@ function addSockets() {
 
 		socket.on('disconnect', () => {
 			io.emit("new message", 'user disconnected');
-		})
-	})
+		});
+
+		socket.on('playerUpdate', (player) => {
+			players[user] = player;
+			io.emit('playerUpdate', players);
+		});
+
+
+
+	});
 }
 
 
@@ -59,7 +79,7 @@ function startServer() {
 			if(!user) return callback('No user found');
 			crypto.pbkdf2(password, user.salt, 10000, 256, 'sha256', (err, resp) => {
 				if(err) return callback('Error handling password');
-				if(resp.toString('base64') === user.password) return callback('Wrong password');
+				if(resp.toString('base64') !== user.password) return callback('Wrong password');
 				callback(null, user);
 			});
 		});
@@ -89,6 +109,22 @@ function startServer() {
 
 	/* PATH SECTION */
 	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
+	app.get('/picture/:username', (req, res, next) => {
+		if(!req.user) return res.send('Please log in.');
+		usermodel.findOne({username: req.params.username}, function (err, user) {
+			if(err) return res.send(err);
+			try {
+				var imageType = user.Avator.match(/^data:image\/([a-zA-Z)-9]*);/)[1];
+				var base64Data = user.Avator.split(',')[1];
+				var binaryData = new Buffer(base64Data, 'base64');
+				res.contentType('image/' + imageType);
+				res.end(binaryData, 'binary');
+			} catch(ex) {
+				res.send(ex);
+			}
+		});
+	});
+
 	app.get('/form', (req, res, next) => {
 
 		/* Get the absolute path of the html file */
@@ -150,9 +186,8 @@ function startServer() {
 	});
 
 	app.post('/login', (req, res, next) => {
-		var username = req.body.username;
-		var password = req.body.password;
-		passport.authenticate('local', function(err, user) {
+		passport.authenticate('local',
+		function(err, user) {
 			if(err) return res.send({error: err});
 			req.logIn(user, (err) => {
 				if(err) res.send({error:err})
@@ -188,6 +223,10 @@ function startServer() {
 
 	});
 
+	app.get('*', (req, res, next) => {
+			res.redirect('/login');
+		})
+
 	// app.get('/bb', (req, res, next) => {
 	// 	if(!req.user) res.redirect('/login');
 	// 	var filePath = path.join(__dirname, './public/game/bb.html')
@@ -212,6 +251,6 @@ function startServer() {
 	/* Tells the server to start listening to requests from defined port */
 	server.listen(port);
 
-mongoose.connect(dbAddress, startServer);
-
 };
+
+mongoose.connect(dbAddress, startServer);
