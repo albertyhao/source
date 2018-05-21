@@ -214,6 +214,13 @@ function startServer() {
 		res.sendFile(filePath);
 	});
 
+	app.get('/roadhouse', (req, res, next) => {
+
+		var filePath = path.join(__dirname, './lobby.html')
+
+		res.sendFile(filePath);
+	});
+
 	app.get('/game', (req, res, next) => {
 		if(!req.user) return res.redirect('/login');
 		var filePath = path.join(__dirname, './game.html')
