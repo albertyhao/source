@@ -1,174 +1,167 @@
 <!DOCTYPE html>
 <html lang="en" class="">
-<head>
-  <!-- noone fvcking knows -->
-  <title>
-    The Family Business
-  </title>
-  <style>
+  <head>
+    <!-- noone fvcking knows -->
+    <title>
+      The Family Business
+    </title>
+    <style>
 
-  canvas {
-  height: 100%;
-  width: 100%;
-  }
-  /* .crosshair {
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
-  top: 50%;
-  pointer-events: none;
-  position: absolute;
-  z-index: 100
-  }
-  .crosshair::before,
-  .crosshair::after {
-  background-color: black;
-  content: "";
-  display: block;
-  height: 0.1vw;
-  width: 2vw;
-  }
-  .crosshair::after {
-  -webkit-transform: rotate(-0.25turn);
-          transform: rotate(-0.25turn);
-  }
+    canvas {
+    height: 100%;
+    width: 100%;
+    }
+    /* .crosshair {
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    top: 50%;
+    pointer-events: none;
+    position: absolute;
+    z-index: 100
+    }
+    .crosshair::before,
+    .crosshair::after {
+    background-color: black;
+    content: "";
+    display: block;
+    height: 0.1vw;
+    width: 2vw;
+    }
+    .crosshair::after {
+    -webkit-transform: rotate(-0.25turn);
+            transform: rotate(-0.25turn);
+    }
 
-  .directions {
-  bottom: 0;
-  color: white;
-  font-family: Menlo, monospace;
-  font-size: 10px;
-  left: 0;
-  padding-bottom: 10px;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  z-index: 100;
-  } */
+    .directions {
+    bottom: 0;
+    color: white;
+    font-family: Menlo, monospace;
+    font-size: 10px;
+    left: 0;
+    padding-bottom: 10px;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    z-index: 100;
+    } */
 
-/* chatting */
-  #chat {
-				position:fixed;
-				right: 0vw;
-				bottom: 2vh;
-				width:28vw;
-				height:80vh;
-        background-image: url(https://pre00.deviantart.net/b0ae/th/pre/f/2012/196/9/4/supernatural_by_life_writer-d57e10v.jpg);
-        background-size: 28vw, 80vh;
-      }
+  /* chatting */
+    #chat {
+  				position:fixed;
+  				right: 0vw;
+  				bottom: 2vh;
+  				width:28vw;
+  				height:80vh;
+          background-image: url(https://pre00.deviantart.net/b0ae/th/pre/f/2012/196/9/4/supernatural_by_life_writer-d57e10v.jpg);
+          background-size: 28vw, 80vh;
+        }
 
-      #chat background-image {
-        position:fixed;
-				right: 0vw;
-				bottom: 2vh;
-				width:28vw;
-				height:80vh;
-      }
+        #chat background-image {
+          position:fixed;
+  				right: 0vw;
+  				bottom: 2vh;
+  				width:28vw;
+  				height:80vh;
+        }
 
-			#chat button {
-				position:absolute;
-				right:2vw;
-				bottom:2vh;
-				width:1vw;
-				font-size:2vmax;
-				width:1em;
-				height:1em;
-				outline:none;
-				border:none;
-				cursor:pointer;
-				background-color:transparent;
-			}
+  			#chat button {
+  				position:absolute;
+  				right:2vw;
+  				bottom:2vh;
+  				width:1vw;
+  				font-size:2vmax;
+  				width:1em;
+  				height:1em;
+  				outline:none;
+  				border:none;
+  				cursor:pointer;
+  				background-color:transparent;
+  			}
 
-			#chat button:hover {
-				font-size:2.2vmax;
-			}
+  			#chat button:hover {
+  				font-size:2.2vmax;
+  			}
 
-			#chat input {
-				position:absolute;
-				right:5vw;
-				bottom:1.5vh;
-				width:20vw;
-				font-size:1.5vmax;
-				padding:0.5vmax;
-				color:black;
-				background-color:transparent;
-			}
+  			#chat input {
+  				position:absolute;
+  				right:5vw;
+  				bottom:1.5vh;
+  				width:20vw;
+  				font-size:1.5vmax;
+  				padding:0.5vmax;
+  				color:black;
+  				background-color:transparent;
+  			}
 
-      #chat ul > li {
-        list-style-type: none;
-      }
+        #chat ul > li {
+          list-style-type: none;
+        }
 
-      #logout {
-        position: fixed;
-        top: 1em;
-        right: 1em;
-        padding: 15px 30px;
-        border: none;
-        background: white;
-      }
-  </style>
-  </head>
-  <body>
-
-
-
-    <div id='chat'>
-    	<ul></ul>
+        #logout {
+          position: fixed;
+          top: 1em;
+          right: 1em;
+          padding: 15px 30px;
+          border: none;
+          background: white;
+        }
+    </style>
+    </head>
+    <body>
+      <div id='chat'>
+        <ul></ul>
     		<div>
-    			<input type='text'>
-    		</div>
-    </div>
+        	<input type='text'>
+      	</div>
+      </div>
 
-    <div>
-      <a class="logout" href='/logout' id="logout"> Log Out </a>
-    </div>
+      <div>
+        <a class="logout" href='/logout' id="logout"> Log Out </a>
+      </div>
+    <canvas width="72vw" height="100vh" style="width: 72vw; height: 100vh;"></canvas>
+    <script src='/js/socket.io.dev.js'></script>
+    <script>
+      var user = '{{USERNAME}}'
 
-<canvas width="72vw" height="100vh" style="width: 72vw; height: 100vh;"></canvas>
-<script src='/js/socket.io.dev.js'></script>
-  <script>
+      var $canvas = document.querySelector('canvas');
+    	$canvas.width = window.screen.width;
+    	$canvas.height = window.screen.height;
 
-  var user = '{{USERNAME}}'
+        // Sockets
 
-  var $canvas = document.querySelector('canvas');
-			$canvas.width = window.screen.width;
-			$canvas.height = window.screen.height;
+      var socket = io({query: {user: user}});
+      var $canvas = document.querySelector('canvas');
+      $canvas.width = window.screen.width;
+      $canvas.height = window.screen.height;
 
-  // Sockets
-
-  var socket = io({query: {user: user}});
-  var $canvas = document.querySelector('canvas');
-			$canvas.width = window.screen.width;
-			$canvas.height = window.screen.height;
-
-  var $input = document.querySelector('input');
+      var $input = document.querySelector('input');
       document.body.addEventListener('keypress', sendMessage);
 
-  function sendMessage(e) {
-    if(e.key !== 'Enter') return;
-    if(document.activeElement.tagName !== 'INPUT') return;
-    if($input.value === '') return;
-    socket.emit('message', {message: $input.value, username: user});
-    $input.value = '';
-  }
+        function sendMessage(e) {
+          if(e.key !== 'Enter') return;
+          if(document.activeElement.tagName !== 'INPUT') return;
+          if($input.value === '') return;
+          socket.emit('message', {message: $input.value, username: user});
+          $input.value = '';
+        }
 
-       // {
-      	// if($input.value) {
-      	// 	socket.emit('message', $input.value);
-      	// 	$input.value = '';
-      	// }
-      // };
+             // {
+            	// if($input.value) {
+            	// 	socket.emit('message', $input.value);
+            	// 	$input.value = '';
+            	// }
+            // };
 
-  socket.on('new message', function(message) {
+        socket.on('new message', function(message) {
 
-    var $ul = document.querySelector('#chat ul');
-    var $li = document.createElement('li');
-    $li.innerHTML = `<strong>${message.username}:</strong> ${message.message}`;
-  	$ul.appendChild($li);
-  });
-
-  </script>
-  <script src='/js/game.js'></script>
-
-</body>
+        var $ul = document.querySelector('#chat ul');
+        var $li = document.createElement('li');
+        $li.innerHTML = `<strong>${message.username}:</strong> ${message.message}`;
+      	$ul.appendChild($li);
+      });
+    </script>
+    <script src='/js/game.js'></script>
+  </body>
 </html>
