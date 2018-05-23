@@ -32,7 +32,7 @@ var Sprite = function(name) {
 var sprites = {
   dean: new Sprite('dean'),
   sam: new Sprite('sam'),
-  cas: new Sprite('cas')
+  castiel: new Sprite('castiel')
 }
 bulletImage.src = '/img/clash2.png'
 
