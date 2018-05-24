@@ -1,182 +1,178 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Login</title>
-<style>
+  <head>
+    <title>Login</title>
+    <style>
+    /* $blue: #5D92BA;
+    $heading-font: 'Tenor Sans', sans-serif; */
 
+      html{
+        background-color: $blue;
+        font-family: $heading-font
+      }
 
-/* $blue: #5D92BA;
-$heading-font: 'Tenor Sans', sans-serif; */
+      .container{
+        width: 500px;
+        height: 400px;
+        margin: 0 auto;
+      }
+      .login{
+        margin-top: 50px;
+        width: 450px;
+      }
+      .login-heading{
+        font: 1.8em/48px $heading-font;
+        color: black;
+        font-family: 'Tenor Sans', sans-serif;
+      }
+      .input-txt{
+        width: 100%;
+        padding: 20px 10px;
+        background: $blue;
+        border: none;
+        font-size: 1em;
+        color: black;
+        border-bottom: 1px dotted rgba(250, 250, 250, .4);
+        @include box-sizing(border-box);
+        @include placeholder(lighten($blue, 10%));
+        @include transition(background-color .5s ease-in-out);
+          &:focus{
+           background-color: darken($blue, 10%);
+          }
+      }
+      .login-footer{
+        margin: 10px 0;
+        overflow: hidden;
+        float: left;
+        width: 100%;
+      }
+      .btn{
+        padding: 15px 30px;
+        border: none;
+        background: white;
+        color: $blue;
+      }
+      .btn--right{
+        float: right;
+      }
+      .icon{
+        display: inline-block;
+      }
+      .icon--min{
+        font-size: .9em;
+      }
+      .lnk{
+        font-size: .8em;
+        line-height: 3em;
+        color: white;
+        text-decoration: none;
+      }
 
+      /* for the season 9 video */
+      #myVideo {
+          position: fixed;
+          top: -40px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
 
-html{
-  background-color: $blue;
-  font-family: $heading-font
-}
+      <!-- <video autoplay id="myVideo">
+        <source src="spn9.mp4" type="video/mp4">
+      </video> -->
 
-.container{
-  width: 500px;
-  height: 400px;
-  margin: 0 auto;
-}
-.login{
-  margin-top: 50px;
-  width: 450px;
-}
-.login-heading{
-  font: 1.8em/48px $heading-font;
-  color: black;
-  font-family: 'Tenor Sans', sans-serif;
-}
-.input-txt{
-  width: 100%;
-  padding: 20px 10px;
-  background: $blue;
-  border: none;
-  font-size: 1em;
-  color: black;
-  border-bottom: 1px dotted rgba(250, 250, 250, .4);
-  @include box-sizing(border-box);
-  @include placeholder(lighten($blue, 10%));
-  @include transition(background-color .5s ease-in-out);
-    &:focus{
-     background-color: darken($blue, 10%);
-    }
-}
-.login-footer{
-  margin: 10px 0;
-  overflow: hidden;
-  float: left;
-  width: 100%;
-}
-.btn{
-  padding: 15px 30px;
-  border: none;
-  background: white;
-  color: $blue;
-}
-.btn--right{
-  float: right;
-}
-.icon{
-  display: inline-block;
-}
-.icon--min{
-  font-size: .9em;
-}
-.lnk{
-  font-size: .8em;
-  line-height: 3em;
-  color: white;
-  text-decoration: none;
-}
-
-/* for the season 9 video */
-#myVideo {
-    position: fixed;
-    top: -40px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-</style>
-</head>
-<body>
-
-  <!-- <video autoplay id="myVideo">
-    <source src="spn9.mp4" type="video/mp4">
-  </video> -->
-
-  <div class="container">
-    <div class="login">
-    	<h1 class="login-heading" style="color: black">Login.</h1>
+      <div class="container">
+        <div class="login">
+        	<h1 class="login-heading" style="color: black">Login.</h1>
           <input type="text" name="username" placeholder="Username" required="required" class="input-txt" />
           <input type="password" name="password" placeholder="Password" required="required" class="input-txt" />
           <div class="login-footer">
             <button class="btn btn--right">Login</button>
           </div>
-    </div>
-  </div>
+        </div>
+      </div>
 
- <script>
+     <script>
 
-  // var $video = document.querySelector('video');
-  // $video.width = window.screen.width;
-  // $video.height = window.screen.height;
-  // $video.style.padding = 0;
-  // $video.style.padding = 0;
-  // $video.style.margin = 0;
-  // setTimeout(function() {
-  //   $video.style.display = "none";
-  // }, 6*1000);
+      // var $video = document.querySelector('video');
+      // $video.width = window.screen.width;
+      // $video.height = window.screen.height;
+      // $video.style.padding = 0;
+      // $video.style.padding = 0;
+      // $video.style.margin = 0;
+      // setTimeout(function() {
+      //   $video.style.display = "none";
+      // }, 6*1000);
 
-  function storeData() {
-    var data = {};
-    var $inputs = document.querySelectorAll('input');
-    var data = {};
+      function storeData() {
+        var data = {};
+        var $inputs = document.querySelectorAll('input');
+        var data = {};
 
-    for(var i = 0; i < $inputs.length; i++) {
-      var $input = $inputs[i];
-      var name = $input.name;
-      var value = $input.value; // or .checked
+        for(var i = 0; i < $inputs.length; i++) {
+          var $input = $inputs[i];
+          var name = $input.name;
+          var value = $input.value; // or .checked
 
-      if($input.type === 'text' || $input.type === 'password') {
-        data[$input.name] = $input.value;
+          if($input.type === 'text' || $input.type === 'password') {
+            data[$input.name] = $input.value;
+          }
+          else if ($input.type === 'checkbox') {
+            data[$input.name] = $input.checked;
+          }
+          else if ($input.type === 'radio' && $input.checked) {
+            data[$input.name] = $input.getAttribute('answer');
+          }
+        }
+
+        for(var i = 0; i < $inputs.length; i++) {
+          var $input = $inputs[i];
+          if($input.type === 'text' || $input.type === 'password') {
+            data[$input.name] =  $input.value;
+          } else if($input.type === 'checkbox') {
+            data[$input.name] =  $input.checked;
+          } else if ($input.type === 'radio' && $input.checked) {
+            data[$input.name] = $input.getAttribute('answer');
+          }
+        }
+
+        sendData(data);
       }
-      else if ($input.type === 'checkbox') {
-        data[$input.name] = $input.checked;
+
+      function sendData(data) {
+        // Creating a new request to the server that contains the data
+        var req = new XMLHttpRequest();
+
+        // Opening up a connection with the server to 'POST' data
+        req.open('POST', '/login', true);
+
+        // Explain to the server that we are sending the data in json format
+        req.setRequestHeader('content-type', 'application/json');
+
+        // Alert the user to any errors from the server
+      function readyStateChange() {
+        if(req.readyState !== 4) return;
+        if(req.status !== 200) return;
+
+        data = JSON.parse(req.responseText);
+        if(data.error) {
+          alert(data.error);
+          return;
+        }
+        window.location.href = "/game";
       }
-      else if ($input.type === 'radio' && $input.checked) {
-        data[$input.name] = $input.getAttribute('answer');
+
+      req.onreadystatechange = readyStateChange;
+
+      // Sending the data in JSON format
+      req.send(JSON.stringify(data));
       }
-    }
 
-    for(var i = 0; i < $inputs.length; i++) {
-      var $input = $inputs[i];
-      if($input.type === 'text' || $input.type === 'password') {
-        data[$input.name] =  $input.value;
-      } else if($input.type === 'checkbox') {
-        data[$input.name] =  $input.checked;
-      } else if ($input.type === 'radio' && $input.checked) {
-        data[$input.name] = $input.getAttribute('answer');
-      }
-    }
-
-    sendData(data);
-  }
-
-  function sendData(data) {
-    // Creating a new request to the server that contains the data
-    var req = new XMLHttpRequest();
-
-    // Opening up a connection with the server to 'POST' data
-    req.open('POST', '/login', true);
-
-    // Explain to the server that we are sending the data in json format
-    req.setRequestHeader('content-type', 'application/json');
-
-    // Alert the user to any errors from the server
-    function readyStateChange() {
-      if(req.readyState !== 4) return;
-      if(req.status !== 200) return;
-
-      data = JSON.parse(req.responseText);
-      if(data.error) {
-        alert(data.error);
-        return;
-      }
-      window.location.href = "/game";
-    }
-    req.onreadystatechange = readyStateChange;
-
-    // Sending the data in JSON format
-    req.send(JSON.stringify(data));
-  }
-
-  var $button = document.querySelector('button')
-  $button.addEventListener('click', storeData)
-
-</script>
-</body>
+      var $button = document.querySelector('button')
+      $button.addEventListener('click', storeData)
+    </script>
+  </body>
 </html>
