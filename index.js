@@ -133,6 +133,14 @@ function startServer() {
 		res.sendFile(filePath);
 	});
 
+	app.get('/formtest', (req, res, next) => {
+
+		/* Get the absolute path of the html file */
+		var filePath = path.join(__dirname, './formtest.html');
+		/* Sends the html file back to the browser */
+		res.sendFile(filePath);
+	});
+
 	app.post('/form', (req, res, next) => {
 
 		var newuser = new usermodel(req.body);
