@@ -118,7 +118,7 @@
       <div>
         <a class="logout" href='/logout' id="logout"> Log Out </a>
       </div>
-    <canvas width="72vw" height="100vh" style="width: 72vw; height: 100vh;"></canvas>
+    <canvas></canvas>
     <script src='/js/socket.io.dev.js'></script>
     <script>
       var user = '{{USERNAME}}'
@@ -159,6 +159,7 @@
         $li.innerHTML = `<strong>${message.username}:</strong> ${message.message}`;
       	$ul.appendChild($li);
       });
+
     </script>
     <script src='/js/game.js'></script>
   </body>
