@@ -121,11 +121,11 @@ function findClosestPlayer(user){
   var closestPlayer;
   Object.keys(gamePieces).forEach(function(playerName) {
     if(playerName === user) return;
-    var x = gamePiece[playerName].x - gamePiece[user].x;
-    var y = gamePiece[playerName].y - gamePiece[user].y;
+    var x = gamePieces[playerName].x - gamePieces[user].x;
+    var y = gamePieces[playerName].y - gamePieces[user].y;
     var dist = x*x + y*y;
     if(dist < distance){
-      closestPlayer = gamePiece[playerName];
+      closestPlayer = gamePieces[playerName];
     }
   });
   return closestPlayer;
