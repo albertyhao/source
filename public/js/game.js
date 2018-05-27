@@ -95,7 +95,7 @@ function collides(bullet) {
 
 function drawBullets(){
   bullets.forEach(function(bullet){
-    canvas.drawImage(bullet.image, bullet.x, bullet.y, bulletWidth, bulletWidth);
+    $canvas.drawImage(bullet.image, bullet.x, bullet.y, bulletWidth, bulletWidth);
     bullet.x += bullet.xStep;
     bullet.y += bullet.yStep;
     if(collides(bullet)){
