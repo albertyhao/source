@@ -7,6 +7,7 @@ var bulletSpeed = 500;
 var bulletWidth = 5;
 var direction = 'right';
 var index = 0;
+
 var Sprite = function(name) {
   this.front = [new Image(), new Image(), new Image()];
   this.left = [new Image(), new Image(), new Image()];
@@ -29,6 +30,7 @@ var Sprite = function(name) {
   this.back[1].src = `/${name}sprites/${name}back2.png`
   this.back[2].src = `/${name}sprites/${name}back3.png`
 }
+
 var sprites = {
   dean: new Sprite('dean'),
   sam: new Sprite('sam'),
@@ -40,50 +42,50 @@ socket.on('playerUpdate', updatePlayers);
 
 function updatePlayers(players) {
 
- var playerNames = Object.keys(players);
+  var playerNames = Object.keys(players);
 
- playerNames.forEach(function(playerName) {
-   if(playerName === user) return;
-   if(!gamePieces[playerName]) {
-     createNewPlayer(playerName);
-   }
+  playerNames.forEach(function(playerName) {
+    if(playerName === user) return;
+    if(!gamePieces[playerName]) {
+      createNewPlayer(playerName);
+    }
 
-   var player = players[playerName];
-   var gamePiece = gamePieces[playerName];
-   gamePiece.x = player.x;
-   gamePiece.y = player.y;
- });
+    var player = players[playerName];
+    var gamePiece = gamePieces[playerName];
+    gamePiece.x = player.x;
+    gamePiece.y = player.y;
+  });
 
- var gamePieceNames = Object.keys(gamePieces);
- gamePieceNames.forEach(function(gamePieceName) {
-   if(!players[gamePieceName]) {
-     delete gamePieces[gamePieceName];
-   }
- })
+  var gamePieceNames = Object.keys(gamePieces);
+  gamePieceNames.forEach(function(gamePieceName) {
+    if(!players[gamePieceName]) {
+      delete gamePieces[gamePieceName];
+    }
+  })
 
 }
 
 function createNewPlayer(playerName) {
 
- var gamePiece = { loaded: false, x: 0, y:0 };
- gamePiece.picture = new Image();
- gamePiece.picture.onload = function() {
-   gamePiece.loaded = true;
- }
- gamePiece.picture.src = '/picture/' + playerName;
- gamePieces[playerName] = gamePiece;
+  var gamePiece = { loaded: false, x: 0, y:0 };
+  gamePiece.picture = new Image();
+  gamePiece.picture.onload = function() {
+    gamePiece.loaded = true;
+  }
+  gamePiece.picture.src = '/picture/' + playerName;
+  gamePieces[playerName] = gamePiece;
 
 }
 
 function drawPlayers() {
 
- var playerNames = Object.keys(gamePieces);
- var pieceWidth = Math.min($canvas.width, $canvas.height) / 10;
- playerNames.forEach(function(playerName) {
-   var gamePiece = gamePieces[playerName];
-   if(!gamePiece.loaded) return;
-   context.drawImage(sprites[playerName][direction][index % 3] ,gamePiece.x, gamePiece.y, pieceWidth, pieceWidth);
- });
+  var playerNames = Object.keys(gamePieces);
+  var pieceWidth = Math.min($canvas.width, $canvas.height) / 10;
+  playerNames.forEach(function(playerName) {
+    var gamePiece = gamePieces[playerName];
+    if(!gamePiece.loaded) return;
+    context.drawImage(sprites[playerName][direction][index % 3] ,gamePiece.x, gamePiece.y, pieceWidth, pieceWidth);
+  });
 
 }
 
@@ -91,7 +93,7 @@ function collides(bullet) {
   if(bullet.x < 0 || bullet.x > $canvas.width) return true;
   if(bullet.y < 0 || bullet.y > $canvas.height) return true;
   return false;
-  }
+}
 
 function drawBullets(){
   bullets.forEach(function(bullet){
@@ -109,10 +111,10 @@ function drawBullets(){
 
 function animate() {
 
- context.clearRect(0, 0, $canvas.width, $canvas.height);
- drawPlayers();
- drawBullets();
- window.requestAnimationFrame(animate);
+  context.clearRect(0, 0, $canvas.width, $canvas.height);
+  drawPlayers();
+  drawBullets();
+  window.requestAnimationFrame(animate);
 
 }
 
@@ -149,40 +151,40 @@ function fire(){
 
 function handlePlayerAction(e) {
 
- var gamePiece = gamePieces[user];
- var step = 25;
- switch(e.key) {
-   case 'ArrowLeft':
-   case 'a':
-     gamePiece.x-= step;
-     direction = 'left';
-     index++;
-     break;
-   case 'ArrowRight':
-   case 'd':
-     gamePiece.x+= step;
-     direction = 'right';
-     index++;
-     break;
-   case 'ArrowDown':
-   case 's':
-     gamePiece.y+= step;
-     direction = 'front';
-     index++;
-     break;
-   case 'ArrowUp':
-   case 'w':
-     gamePiece.y-= step;
-     direction = 'back';
-     index++;
-     break;
-   case 'p':
-     fire();
-     break;
-   default:
-     return;
- }
- socket.emit('playerUpdate', {x: gamePiece.x, y: gamePiece.y});
+  var gamePiece = gamePieces[user];
+  var step = 25;
+  switch(e.key) {
+    case 'ArrowLeft':
+    case 'a':
+    gamePiece.x-= step;
+    direction = 'left';
+    index++;
+    break;
+    case 'ArrowRight':
+    case 'd':
+    gamePiece.x+= step;
+    direction = 'right';
+    index++;
+    break;
+    case 'ArrowDown':
+    case 's':
+    gamePiece.y+= step;
+    direction = 'front';
+    index++;
+    break;
+    case 'ArrowUp':
+    case 'w':
+    gamePiece.y-= step;
+    direction = 'back';
+    index++;
+    break;
+    case 'p':
+    fire();
+    break;
+    default:
+    return;
+  }
+  socket.emit('playerUpdate', {x: gamePiece.x, y: gamePiece.y});
 
 }
 
