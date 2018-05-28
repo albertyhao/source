@@ -7,9 +7,6 @@
     </title>
     <style>
 
-      canvas {
-
-      }
     /* .crosshair {
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
@@ -47,13 +44,10 @@
     } */
 
   /* chatting */
-    /* .chat {
-      right: 0vw;
-      bottom: 2vh;
-      width:28vw;
-      height:100vh;
-    } */
-
+    * {
+      margin: 0;
+      padding: 0;
+    }
     #chat {
   				position:fixed;
   				right: 0vw;
@@ -122,7 +116,6 @@
       	</div>
         <a class="logout" href='/logout' id="logout"> Log Out </a>
         <canvas style= "overflow: hidden;
-        position: absolute;
         height: 100vh;
         width: 71.5vw;
         background-image: url(./public/images/room.pdf)"></canvas>
@@ -132,8 +125,8 @@
       var user = '{{USERNAME}}'
 
       var $canvas = document.querySelector('canvas');
-    	$canvas.width = window.screen.width;
-    	$canvas.height = window.screen.height;
+      $canvas.width = window.innerWidth;
+      $canvas.height = window.innerHeight;
 
         // Sockets
 
