@@ -8,9 +8,7 @@
     <style>
 
       canvas {
-        height: 100%;
-        width: 100%;
-        background-image: url("./public/images/room.pdf")
+
       }
     /* .crosshair {
     left: 50%;
@@ -49,6 +47,13 @@
     } */
 
   /* chatting */
+    /* .chat {
+      right: 0vw;
+      bottom: 2vh;
+      width:28vw;
+      height:100vh;
+    } */
+
     #chat {
   				position:fixed;
   				right: 0vw;
@@ -56,13 +61,12 @@
   				width:28vw;
   				height:80vh;
           background-image: url(https://pre00.deviantart.net/b0ae/th/pre/f/2012/196/9/4/supernatural_by_life_writer-d57e10v.jpg);
-          background-size: 28vw, 80vh;
         }
 
         #chat background-image {
           position:fixed;
   				right: 0vw;
-  				bottom: 2vh;
+  				bottom: 0vh;
   				width:28vw;
   				height:80vh;
         }
@@ -111,14 +115,18 @@
     </style>
     </head>
     <body>
+      <div>
       <div id='chat'>
         <ul></ul>
         	<input type='text'>
       	</div>
-      <div>
         <a class="logout" href='/logout' id="logout"> Log Out </a>
+        <canvas style= "overflow: hidden;
+        position: absolute;
+        height: 100vh;
+        width: 71.5vw;
+        background-image: url(./public/images/room.pdf)"></canvas>
       </div>
-    <canvas></canvas>
     <script src='/js/socket.io.dev.js'></script>
     <script>
       var user = '{{USERNAME}}'
