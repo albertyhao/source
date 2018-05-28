@@ -139,8 +139,7 @@ function drawBackground() {
     loader = (new ({
         done: drawTiles,                    /// called when images are loaded
         urls: ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png']   /// order will be preserved
-    })).load();
-  }                     /// start loading
+    })).load();                /// start loading
 
 function drawTiles(e) {
 
