@@ -152,7 +152,7 @@ function fire(){
 function handlePlayerAction(e) {
 
   var gamePiece = gamePieces[user];
-  var step = 25;
+  var step = 40;
   switch(e.key) {
     case 'ArrowLeft':
     case 'a':
