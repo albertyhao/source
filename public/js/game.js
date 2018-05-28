@@ -1,4 +1,3 @@
-
 var gamePieces = {};
 var context = $canvas.getContext('2d');
 var bulletImage = new Image();
@@ -7,6 +6,10 @@ var bulletSpeed = 500;
 var bulletWidth = 5;
 var direction = 'right';
 var index = 0;
+var imageSources = ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png'];
+var tileImages = [];
+var loaded = 0;
+var imageCount = 4;
 
 var Sprite = function(name) {
   this.front = [new Image(), new Image(), new Image()];
@@ -37,9 +40,19 @@ var sprites = {
   castiel: new Sprite('castiel')
 }
 
-bulletImage.src = '/img/clash2.png'
+bulletImage.src = '/images/clash2.png'
 
-socket.on('playerUpdate', updatePlayers);
+imageSources.forEach(function(imgSource){
+    var img = new Image();
+    img.onload = function() {
+      loaded++;
+      if(loaded === imageCount) {
+        callMeAfterAllImagesLoaded()
+      }
+    }
+    img.src = imgSource;
+    tileImages.push(img);
+})
 
 function updatePlayers(players) {
 
@@ -111,55 +124,40 @@ function drawBullets(){
 }
 
 function drawBackground() {
-  context.drawImage(img, 0, 0, $canvas.width, $canvas.height);
+
   var map = [[1,1,1,1,1,1,1,1,3,3,3,3,1,1,1,1,1,1,1,1],
-            [1,2,2,4,2,2,2,2,2,2,4,2,4,2,4,4,4,2,4,1],
-            [1,2,2,4,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-            [1,2,2,2,2,2,2,2,4,4,2,2,4,2,4,4,4,2,4,1],
-            [1,2,4,2,4,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-            [1,2,4,2,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
-            [1,2,2,4,2,2,4,2,2,2,2,2,4,2,4,4,4,2,4,1],
-            [1,4,2,2,4,2,2,4,2,2,2,2,4,2,4,4,4,2,4,1],
-            [3,2,2,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,3],
-            [3,4,2,2,4,2,2,4,2,2,4,2,4,2,4,4,4,2,4,3],
-            [3,4,2,4,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,3],
-            [3,2,4,2,2,2,2,4,2,2,4,2,4,2,4,4,4,2,4,3],
-            [1,2,2,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-            [1,2,2,2,2,4,2,2,4,2,2,2,4,2,4,4,4,2,4,1],
-            [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-            [1,2,2,4,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
-            [1,2,2,2,2,2,2,2,2,2,4,4,4,2,4,4,4,2,4,1],
-            [1,2,4,2,4,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
-            [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-            [1,1,1,1,1,1,1,1,3,3,3,3,1,1,1,1,1,1,1,1]
-          ],
-    x = 0,
-    y = 0,
+           [1,2,2,4,2,2,2,2,2,2,4,2,4,2,4,4,4,2,4,1],
+           [1,2,2,4,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,2,2,2,2,2,4,4,2,2,4,2,4,4,4,2,4,1],
+           [1,2,4,2,4,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,2,4,2,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,4,2,2,4,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,4,2,2,4,2,2,4,2,2,2,2,4,2,4,4,4,2,4,1],
+           [3,2,2,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,3],
+           [3,4,2,2,4,2,2,4,2,2,4,2,4,2,4,4,4,2,4,3],
+           [3,4,2,4,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,3],
+           [3,2,4,2,2,2,2,4,2,2,4,2,4,2,4,4,4,2,4,3],
+           [1,2,2,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,2,2,4,2,2,4,2,2,2,4,2,4,4,4,2,4,1],
+           [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,4,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,2,2,2,2,2,2,2,4,4,4,2,4,4,4,2,4,1],
+           [1,2,4,2,4,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
+           [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,1,1,1,1,1,1,1,3,3,3,3,1,1,1,1,1,1,1,1]
+         ], /* NATHAN INSERT MAP HERE */
+  var x = 0;
+  var y = 0;
+  var width = 64;
+  var height = 64;
 
-    /// loader code
-    loader = (new ({
-        done: drawTiles,                    /// called when images are loaded
-        urls: ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png']   /// order will be preserved
-    })).load();
-  }                     /// start loading
-
-function drawTiles(e) {
-
-    /// loop and get map index
-    for (var j = 0, tile; tile = map[j]; j++){
-        if(x == 512){
-            x = 0;
-            y += 64;
-        }
-        context.drawImage(e.images[tile - 1], x, y);
-        x += 64;
-    }
+  for(var y = 0; y < map.length; y++) {
+      for(var x = 0; x < map[y].length; x++) {
+          var tileImage = tileImages[map[y][x]]
+          context.drawImage(tileImage, x*width, y*height);
+      }
+  }
 };
-drawImage();
-drawTiles();
-};
-
-
 
 function animate() {
 
@@ -256,6 +254,9 @@ function handlePlayerAction(e) {
 
 }
 
-document.body.addEventListener('keydown', handlePlayerAction);
-window.requestAnimationFrame(animate);
-createNewPlayer(user);
+function callMeAfterAllImagesLoaded() {
+    document.body.addEventListener('keydown', handlePlayerAction);
+    socket.on('playerUpdate', updatePlayers);
+    window.requestAnimationFrame(animate);
+    createNewPlayer(user);
+}
