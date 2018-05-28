@@ -80,24 +80,17 @@ function updatePlayers(players) {
 }
 
 function createNewPlayer(playerName) {
-
-<<<<<<< HEAD
-  var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2 };
-  gamePiece.picture = new Image();
   // gamePiece.picture.onload = function() {
   //   gamePiece.loaded = true;
   // }
-  gamePiece.loaded=true;
   //gamePiece.picture.src = '/picture/' + playerName;
   gamePieces[playerName] = gamePiece;
-=======
-  var gamePiece = { loaded: false, x: 0, y:0 };
+  var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2 };
 
   gamePiece.picture = new Image();
   gamePiece.picture.onload = function() {
     gamePiece.loaded = true;
   }
->>>>>>> 6e903a15de8cfc2a23a3c96b398f3c705c0e6e8c
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/picture/' + playerName);
