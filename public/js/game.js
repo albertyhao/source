@@ -152,6 +152,21 @@ function animate() {
 }
 
 function findClosestPlayer(user){
+  var player = gamePieces[user];
+  if(Object.keys(gamePieces).length < 2){
+    if(direction === "left"){
+      return {x: 0, y: player.y}
+    }
+    if(direction === "right"){
+      return {x: $canvas.width, y: player.y}
+    }
+    if(direction === "back"){
+      return {x: player.x, y: $canvas.height}
+    }
+    if(direction === "front"){
+      return {x: player.x, y: $canvas.height}
+    }
+  }
   var distance = Infinity;
   var closestPlayer;
   Object.keys(gamePieces).forEach(function(playerName) {
