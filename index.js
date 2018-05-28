@@ -7,7 +7,6 @@ var mongoose = require('mongoose');
 var usermodel = require('./user.js').getModel();
 var crypto = require('crypto');
 var Io = require('socket.io');
-var usermodel = require('./user.js').getModel();
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session');
@@ -25,8 +24,8 @@ var io = Io(server);
 
 /* Defines what port to use to listen to web requests */
 var port =  process.env.PORT
-		? parseInt(process.env.PORT)
-		: 3235;
+? parseInt(process.env.PORT)
+: 3235;
 
 var dbAddress = process.env.MONGODB_URI || 'mongodb://127.0.0.1/TFW';
 
@@ -72,7 +71,7 @@ function startServer() {
 	addSockets();
 
 	function authenticateUser(username, password, callback) {
-	if(!username) return callback('No username given');
+		if(!username) return callback('No username given');
 		if(!password) return callback('No password given');
 		usermodel.findOne({username: username}, (err, user) => {
 			if(err) return callback('Error connecting to database');
@@ -114,11 +113,7 @@ function startServer() {
 		usermodel.findOne({username: req.params.username}, function (err, user) {
 			if(err) return res.send(err);
 			try {
-				var imageType = user.Avator.match(/^data:image\/([a-zA-Z)-9]*);/)[1];
-				var base64Data = user.Avator.split(',')[1];
-				var binaryData = new Buffer(base64Data, 'base64');
-				res.contentType('image/' + imageType);
-				res.end(binaryData, 'binary');
+				res.send(user.Avator);
 			} catch(ex) {
 				res.send(ex);
 			}
@@ -126,14 +121,11 @@ function startServer() {
 	});
 
 	app.get('/form', (req, res, next) => {
-
-		/* Get the absolute path of the html file */
-		var filePath = path.join(__dirname, './index.html');
-		/* Sends the html file back to the browser */
-		res.sendFile(filePath);
+		// var filePath = path.join(__dirname, './index.html');
+		// res.sendFile(filePath);
 	});
 
-	app.get('/formtest', (req, res, next) => {
+	app.get('/signup', (req, res, next) => {
 
 		/* Get the absolute path of the html file */
 		var filePath = path.join(__dirname, './formtest.html');
@@ -145,6 +137,7 @@ function startServer() {
 
 		var newuser = new usermodel(req.body);
 		var password = req.body.password;
+		console.log(newuser.Avator);
 		// Adding a random string to salt the password with
 		var salt = crypto.randomBytes(128).toString('base64');
 		newuser.salt = salt;
@@ -152,28 +145,29 @@ function startServer() {
 
 		crypto.pbkdf2(password, salt, iterations, 256, 'sha256', function(err, hash) {
 			if(err) {
-						return res.send({error: err});
-					}
-					newuser.password = hash.toString('base64');
-					// Saving the user object to the database
+				return res.send({error: err});
+			}
+			newuser.password = hash.toString('base64');
+			// Saving the user object to the database
 			newuser.save(function(err) {
 				// Handling the duplicate key errors from database
-					if(err && err.message.includes('duplicate key error') && err.message.includes('username')) {
-						return res.send({error: 'username, ' + req.body.username + 'already taken'})
-					}
-					if(err) {
-						return res.send({error: err.message})
-					}
-					passport.authenticate('local', function(err, user) {
+				if(err && err.message.includes('duplicate key error') && err.message.includes('username')) {
+					return res.send({error: 'username, ' + req.body.username + 'already taken'})
+				}
+				if(err) {
+					return res.send({error: err.message})
+				}
+				passport.authenticate('local', function(err, user) {
 
+					if(err) return res.send({error: err});
+					req.logIn(user, (err) => {
 						if(err) return res.send({error: err});
-						req.logIn(user, (err) => {
-							if(err) return res.send({error: err});
-							res.send({error: null});
-						});
+						res.send({error: null});
+					});
 
-					})(req, res, next)});
+				})(req, res, next)
 			});
+		});
 	});
 
 	/* Defines what function to call when a request comes from the path '/' in http://localhost:8080 */
@@ -199,10 +193,10 @@ function startServer() {
 			if(err) return res.send({error: err});
 			req.logIn(user, (err) => {
 				if(err) res.send({error:err})
-					res.send({error: null});
-				});
-			}) (req, res, next);
-		});
+				res.send({error: null});
+			});
+		}) (req, res, next);
+	});
 
 	app.get('/destielimage', (req, res, next) => {
 		res.send('<img src="https://vignette.wikia.nocookie.net/shipping/images/d/df/Supernatural_-_Destiel_Carry_%28NaSyu%29.jpg/revision/latest?cb=20130925063250">');
@@ -239,8 +233,8 @@ function startServer() {
 	});
 
 	app.get('*', (req, res, next) => {
-			res.redirect('/login');
-		})
+		res.redirect('/login');
+	})
 
 	// app.get('/bb', (req, res, next) => {
 	// 	if(!req.user) res.redirect('/login');
@@ -254,9 +248,9 @@ function startServer() {
 
 		/* Determining what the server is listening for */
 		var addr = server.address()
-			, bind = typeof addr === 'string'
-				? 'pipe ' + addr
-				: 'port ' + addr.port
+		, bind = typeof addr === 'string'
+		? 'pipe ' + addr
+		: 'port ' + addr.port
 		;
 
 		/* Outputs to the console that the webserver is ready to start listenting to requests */
