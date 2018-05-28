@@ -6,7 +6,7 @@ var bulletSpeed = 500;
 var bulletWidth = 5;
 var direction = 'right';
 var index = 0;
-var imageSources = ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png'];
+var imageSources = ['/images/1.png', '/images/2.png', '/images/3.png', '/images/4.png'];
 var tileImages = [];
 var loaded = 0;
 var imageCount = 4;
@@ -80,15 +80,23 @@ function updatePlayers(players) {
 }
 
 function createNewPlayer(playerName) {
-
+  gamePieces[playerName] = gamePiece;
+  var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2 };
   var gamePiece = { loaded: false, x: 0, y:0 };
+
   gamePiece.picture = new Image();
   gamePiece.picture.onload = function() {
     gamePiece.loaded = true;
   }
-  gamePiece.picture.src = '/picture/' + playerName;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/picture/' + playerName);
+  xhr.onload = function(res) {
+    if (xhr.status === 200) {
+        gamePiece.picture.src =  xhr.responseText;
+    }
+  }
+  xhr.send();
   gamePieces[playerName] = gamePiece;
-
 }
 
 function drawPlayers() {
@@ -126,35 +134,35 @@ function drawBullets(){
 function drawBackground() {
 
   var map = [[1,1,1,1,1,1,1,1,3,3,3,3,1,1,1,1,1,1,1,1],
-           [1,2,2,4,2,2,2,2,2,2,4,2,4,2,4,4,4,2,4,1],
-           [1,2,2,4,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-           [1,2,2,2,2,2,2,2,4,4,2,2,4,2,4,4,4,2,4,1],
-           [1,2,4,2,4,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,4,2,2,2,2,2,2,4,2,4,2,4,2,4,2,4,1],
+           [1,2,2,4,2,2,2,2,2,2,2,2,4,2,4,2,4,2,4,1],
+           [1,2,2,2,2,2,2,2,4,4,2,2,4,4,4,4,4,2,2,1],
+           [1,2,4,2,4,2,2,2,2,2,2,2,4,2,2,2,4,2,4,1],
            [1,2,4,2,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
-           [1,2,2,4,2,2,4,2,2,2,2,2,4,2,4,4,4,2,4,1],
-           [1,4,2,2,4,2,2,4,2,2,2,2,4,2,4,4,4,2,4,1],
-           [3,2,2,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,3],
-           [3,4,2,2,4,2,2,4,2,2,4,2,4,2,4,4,4,2,4,3],
-           [3,4,2,4,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,3],
-           [3,2,4,2,2,2,2,4,2,2,4,2,4,2,4,4,4,2,4,3],
-           [1,2,2,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-           [1,2,2,2,2,4,2,2,4,2,2,2,4,2,4,4,4,2,4,1],
-           [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
-           [1,2,2,4,2,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
-           [1,2,2,2,2,2,2,2,2,2,4,4,4,2,4,4,4,2,4,1],
-           [1,2,4,2,4,2,2,2,2,4,2,2,4,2,4,4,4,2,4,1],
+           [1,2,2,4,2,2,4,2,2,2,2,2,2,2,4,2,4,2,4,1],
+           [1,4,2,2,4,2,2,4,2,2,2,2,2,4,2,2,4,2,4,1],
+           [3,2,2,2,2,2,2,2,2,2,2,2,4,2,4,2,4,2,4,3],
+           [3,4,2,2,4,2,2,4,2,2,4,2,4,2,4,2,2,2,4,3],
+           [3,4,2,4,2,2,2,2,2,4,2,4,2,2,4,4,4,2,4,3],
+           [3,2,4,2,2,2,2,4,2,4,2,4,2,2,2,2,4,2,2,3],
+           [1,2,2,2,2,2,2,2,2,2,4,2,2,2,4,4,4,2,4,1],
+           [1,2,2,2,2,4,2,2,4,2,2,2,4,4,4,2,2,2,2,1],
+           [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,2,4,2,4,1],
+           [1,2,2,4,2,2,2,2,2,4,2,2,2,2,2,4,4,2,4,1],
+           [1,2,2,2,2,2,2,2,2,2,4,4,4,4,4,2,4,2,4,1],
+           [1,2,4,2,4,2,2,2,2,4,2,2,2,2,4,4,4,2,4,1],
            [1,2,4,2,2,2,2,2,2,2,2,2,4,2,4,4,4,2,4,1],
            [1,1,1,1,1,1,1,1,3,3,3,3,1,1,1,1,1,1,1,1]
-         ], /* NATHAN INSERT MAP HERE */
+         ]; /* NATHAN INSERT MAP HERE */
   var x = 0;
   var y = 0;
-  var width = 64;
-  var height = 64;
+  var width = $canvas.width/20;
+  var height = $canvas.height/20;
 
   for(var y = 0; y < map.length; y++) {
       for(var x = 0; x < map[y].length; x++) {
-          var tileImage = tileImages[map[y][x]]
-          context.drawImage(tileImage, x*width, y*height);
+          var tileImage = tileImages[map[y][x]-1]
+          context.drawImage(tileImage, x*width, y*height, width, height);
       }
   }
 };
