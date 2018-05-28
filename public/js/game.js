@@ -36,6 +36,7 @@ var sprites = {
   sam: new Sprite('sam'),
   castiel: new Sprite('castiel')
 }
+
 bulletImage.src = '/img/clash2.png'
 
 socket.on('playerUpdate', updatePlayers);
@@ -109,9 +110,15 @@ function drawBullets(){
   })
 }
 
+function drawBackground() {
+  drawImage(img, 0, 0, $canvas.width, $canvas.height);)
+  
+}
+
 function animate() {
 
   context.clearRect(0, 0, $canvas.width, $canvas.height);
+  drawBackground();
   drawPlayers();
   drawBullets();
   window.requestAnimationFrame(animate);
