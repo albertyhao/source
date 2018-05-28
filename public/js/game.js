@@ -111,6 +111,25 @@ function drawBullets(){
 }
 
 function drawBackground() {
+  var imageSources = ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png'];
+  var tile = [];
+  var loaded = 0;
+  function callMeAfterAllImagesLoaded() {
+
+  }
+
+  images.forEach(function(imgSource){
+    var img = new Image();
+    img.onload = function() {
+      loaded++;
+      if(loaded === 3) {
+        callMeAfterAllImagesLoaded()
+      }
+    }
+    img.src = imgSource;
+    tiles.push(img);
+  })
+
   context.drawImage(img, 0, 0, $canvas.width, $canvas.height);
   var map = [1],
     x = 0,
