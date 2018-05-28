@@ -111,19 +111,17 @@ function drawBullets(){
 }
 
 function drawBackground() {
-  drawImage(img, 0, 0, $canvas.width, $canvas.height);
-  var map = [2,2,2,2,2,2,2,2,2,2,  /// use numbers instead of strings here
-           2,1,1,1,1,3,1,1,1,2,
-           2,1,1,1,1,3,1,1,1,2,
-           2,2,2,2,2,2,2,2,2,2],
+  context.drawImage(img, 0, 0, $canvas.width, $canvas.height);
+  var map = [1],
     x = 0,
     y = 0,
 
     /// loader code
-    loader = (new YAIL({
+    loader = (new ({
         done: drawTiles,                    /// called when images are loaded
-        urls: ['public/images/1.png', 'public/images/2.png', 'public/images/3.png', 'public/images/4.png']   /// order will be preserved
-    })).load();                             /// start loading
+        urls: ['images/1.png', 'images/2.png', 'images/3.png', 'images/4.png']   /// order will be preserved
+    })).load();
+  }                     /// start loading
 
 function drawTiles(e) {
 
@@ -136,9 +134,12 @@ function drawTiles(e) {
         context.drawImage(e.images[tile - 1], x, y);
         x += 64;
     }
-    drawImage();
-    drawTiles();
-}
+};
+drawImage();
+drawTiles();
+};
+
+
 
 function animate() {
 
