@@ -8,8 +8,10 @@
     <style>
 
       canvas {
-        height: 100%;
-        width: 100%;
+        overflow: hidden;
+        position: absolute;
+        height: 100vh;
+        width: 100vw;
         background-image: url("./public/images/room.pdf")
       }
     /* .crosshair {
@@ -49,6 +51,13 @@
     } */
 
   /* chatting */
+    .chat {
+      right: 0vw;
+      bottom: 0vh;
+      width:28vw;
+      height:100vh;
+    }
+
     #chat {
   				position:fixed;
   				right: 0vw;
@@ -111,14 +120,18 @@
     </style>
     </head>
     <body>
+      <div class="chat">
       <div id='chat'>
         <ul></ul>
         	<input type='text'>
       	</div>
+      </div>
       <div>
         <a class="logout" href='/logout' id="logout"> Log Out </a>
       </div>
+      <div>
     <canvas></canvas>
+  </div>
     <script src='/js/socket.io.dev.js'></script>
     <script>
       var user = '{{USERNAME}}'
