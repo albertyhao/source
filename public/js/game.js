@@ -80,18 +80,31 @@ function updatePlayers(players) {
 }
 
 function createNewPlayer(playerName) {
+<<<<<<< HEAD
+=======
+
+  var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2 };
+  gamePiece.picture = new Image();
+>>>>>>> 38aa9cab027e5d7a65ff17293bac5087bff03afd
   // gamePiece.picture.onload = function() {
   //   gamePiece.loaded = true;
   // }
   //gamePiece.picture.src = '/picture/' + playerName;
   gamePieces[playerName] = gamePiece;
+<<<<<<< HEAD
   var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2 };
+=======
+  var gamePiece = { loaded: false, x: 0, y:0 };
+>>>>>>> 38aa9cab027e5d7a65ff17293bac5087bff03afd
 
   gamePiece.picture = new Image();
   gamePiece.picture.onload = function() {
     gamePiece.loaded = true;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 38aa9cab027e5d7a65ff17293bac5087bff03afd
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/picture/' + playerName);
   xhr.onload = function(res) {
