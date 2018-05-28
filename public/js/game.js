@@ -68,13 +68,21 @@ function updatePlayers(players) {
 function createNewPlayer(playerName) {
 
   var gamePiece = { loaded: false, x: 0, y:0 };
+
   gamePiece.picture = new Image();
   gamePiece.picture.onload = function() {
     gamePiece.loaded = true;
   }
-  gamePiece.picture.src = '/picture/' + playerName;
-  gamePieces[playerName] = gamePiece;
 
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/picture/' + playerName);
+  xhr.onload = function(res) {
+    if (xhr.status === 200) {
+        gamePiece.picture.src =  xhr.responseText;
+    }
+  }
+  xhr.send();
+  gamePieces[playerName] = gamePiece;
 }
 
 function drawPlayers() {

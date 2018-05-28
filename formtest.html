@@ -186,19 +186,6 @@
 			  }
 			}
 
-			#Avator img {
-				width: 100px;
-			}
-
-      .avatar {
-        height: 40%;
-        width: 40%;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        top: 50%;
-      }
-
       .column {
         float: left;
         width: 33.33%;
@@ -279,6 +266,11 @@
         width: 100%;
         left: 0;
       }
+
+			.selectedavatar {
+		    box-shadow: 0px 0px 10px 3px red;
+				border: red 2px solid;
+			}
 		</style>
 	</head>
 
@@ -290,50 +282,75 @@
 					<input type="text" name="username" placeholder="Username">
 					<input type="password" name="password" placeholder="Password">
 					<input type="password" name="verifyPassword" placeholder="Verify Password">
-
-          <div>
-            <div class="column">
-              <img src="http://i66.tinypic.com/2mzfrbt.png" class="avatar">
-              <h2>Dean</h2>
-            </div>
-            <div class="column">
-              <img src="http://i65.tinypic.com/w7e9s7.png" class="avatar">
-              <h2>Sam</h2>
-            </div>
-            <div class="column">
-              <img src="http://i63.tinypic.com/24ovhuq.png" class="avatar">
-              <h2>Castiel</h2>
-            </div>
-          </div>
-					<button class = "btn3">Sign Up</button>
 				</div>
+        <div style='clear:both;'>
+          <div class="column" id = "dean">
+            <img src="http://i66.tinypic.com/2mzfrbt.png" class="avatar">
+            <h2>Dean</h2>
+          </div>
+          <div class="column" id = "sam">
+            <img src="http://i65.tinypic.com/w7e9s7.png" class="avatar">
+            <h2>Sam</h2>
+          </div>
+          <div class="column" id = "castiel">
+            <img src="http://i63.tinypic.com/24ovhuq.png" class="avatar">
+            <h2>Castiel</h2>
+          </div>
+					<div style='clear:both; display:block;'>
+						<button class = "btn3">Sign Up</button>
+					</div>
+        </div>
+
 			</div>
 		</div>
 
 		<center>
-		<div class="menu">
-      <div class="column2">
-        <a href="/login" style = "text-decoration: none;">
-          <div class="btncontainer">
-            <div class="btn3" id = "first">Login</div>
-          </div>
-        </a>
-      </div>
-      <div class="column2">
-        <a href="/game" style = "text-decoration: none;">
-          <div class="btncontainer" id = "second">
-            <div class="btn3">Game Board</div>
-          </div>
-        </a>
-		</div>
+			<div class="menu">
+	      <div class="column2">
+	        <a href="/login" style = "text-decoration: none;">
+	          <div class="btncontainer">
+	            <div class="btn3" id = "first">Login</div>
+	          </div>
+	        </a>
+	      </div>
+	      <div class="column2">
+	        <a href="/game" style = "text-decoration: none;">
+	          <div class="btncontainer" id = "second">
+	            <div class="btn3">Game Board</div>
+	          </div>
+	        </a>
+			</div>
 		</center>
 
 
 		<script>
+
+			/*
+			1. add event listener to each div
+			2. once select div, change class to "selected" (to show its selected)
+			3. store image path into global variable
+			4. send selected image path to server
+			*/
 		var imageData;
-		var $character = document.querySelector('input[name=Avator]');
-		var $prevImg = document.querySelector('#Avator')
-		$character.addEventListener('change', grabAvator);
+
+		var $dean = document.getElementById("dean");
+		var $sam = document.getElementById("sam");
+		var $castiel = document.getElementById("castiel");
+
+		$dean.addEventListener("click", storeAvatar);
+		$sam.addEventListener("click", storeAvatar);
+		$castiel.addEventListener("click", storeAvatar);
+
+		function storeAvatar() {
+			var selectedID = this.id;
+			console.log(selectedID);
+			$dean.className = (selectedID === 'dean') ? "selectedavatar column": 'column';
+			$sam.className = (selectedID === 'sam') ? "selectedavatar column": 'column';
+			$castiel.className = (selectedID === 'castiel') ? "selectedavatar column": 'column';
+
+			imageData = document.querySelector(".selectedavatar img").src;
+			console.log(imageData);
+		}
 
 		function grabAvator() {
 			var fileReader = new FileReader();
@@ -371,11 +388,10 @@
 				if($input.type === 'text' || $input.type === 'password') {
 					data[$input.name] = $input.value;
 				}
-				else if ($input.type === 'file') {
-					data[$input.name] = imageData;
-				}
 
 			}
+
+			data.Avator = imageData;
 
 			// for(var i = 0; i < $inputs.length; i++) {
 			// 	var $input = $inputs[i];
