@@ -2,14 +2,8 @@ var gamePieces = {};
 var context = $canvas.getContext('2d');
 var bulletImage = new Image();
 var bullets = [];
-<<<<<<< HEAD
-var bulletSpeed = 1;
-var bulletWidth = 5;
-=======
 var bulletSpeed = 10;
 var bulletWidth = 50;
-var direction = 'right';
->>>>>>> 8688b85431201ef96948f28c8e40d24d09d1b5b3
 var index = 0;
 var imageSources = ['/images/1.png', '/images/2.png', '/images/3.png', '/images/4.png'];
 var tileImages = [];
