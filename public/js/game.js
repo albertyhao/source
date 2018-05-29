@@ -211,8 +211,8 @@ function fire(){
   var closestPlayer = findClosestPlayer(user);
   var theta = Math.atan((closestPlayer.y - player.y)/(closestPlayer.x - player.x));
   var bullet = {
-    xStart: player.x,
-    yStart: player.y,
+    x: player.x,
+    y: player.y,
     xEnd: closestPlayer.x,
     yEnd: closestPlayer.y,
     xStep: bulletSpeed*Math.cos(theta),
