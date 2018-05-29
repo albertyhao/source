@@ -1,7 +1,6 @@
 var gamePieces = {};
 var context = $canvas.getContext('2d');
 var bulletImage = new Image();
-var bullets = [];
 var allBullets = {
   dean: [],
   sam: [],
@@ -126,9 +125,9 @@ function collides(bullet) {
 
 function drawBullets(){
   Object.keys(allBullets).forEach(function(playername){
-    var bullets = allBullets[playername];
+    var bullets = allBullets[playername] || [];
     bullets.forEach(function(bullet){
-      context.drawImage(bullet.image, bullet.x, bullet.y, bulletWidth, bulletWidth);
+      context.drawImage(bulletImage, bullet.x, bullet.y, bulletWidth, bulletWidth);
       bullet.x += bullet.xStep;
       bullet.y += bullet.yStep;
       if(collides(bullet)){
@@ -191,16 +190,16 @@ function animate() {
 function findClosestPlayer(user){
   var player = gamePieces[user];
   if(Object.keys(gamePieces).length < 2){
-    if(gamePiece.direction === "left"){
+    if(player.direction === "left"){
       return {x: 0, y: player.y}
     }
-    if(gamePiece.direction === "right"){
+    if(player.direction === "right"){
       return {x: $canvas.width, y: player.y}
     }
-    if(gamePiece.direction === "back"){
+    if(player.direction === "back"){
       return {x: player.x, y: $canvas.height}
     }
-    if(gamePiece.direction === "front"){
+    if(player.direction === "front"){
       return {x: player.x, y: $canvas.height}
     }
   }
@@ -231,8 +230,8 @@ function fire(){
     yStep: bulletSpeed*Math.sin(theta),
     image: bulletImage
   };
-  bullets.push(bullet);
-  socket.emit(user, bullets);
+  allBullets[user].push(bullet);
+  socket.emit(user, allBullets[user]);
 }
 
 function handlePlayerAction(e) {
@@ -272,6 +271,16 @@ function handlePlayerAction(e) {
   }
   socket.emit('playerUpdate', {x: gamePiece.x, y: gamePiece.y, direction: gamePiece.direction});
 
+}
+
+function updatedeanbullets(bullets) {
+  allBullets.dean = bullets;
+}
+function updatesambullets(bullets) {
+  allBullets.sam = bullets;
+}
+function updatecasbullets(bullets) {
+  allBullets.castiel = bullets;
 }
 
 function callMeAfterAllImagesLoaded() {
