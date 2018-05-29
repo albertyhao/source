@@ -40,7 +40,7 @@ var sprites = {
   castiel: new Sprite('castiel')
 }
 
-bulletImage.src = '/img/clash2.png'
+bulletImage.src = '/images/clash2.png'
 
 imageSources.forEach(function(imgSource){
     var img = new Image();
