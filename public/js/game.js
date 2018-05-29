@@ -2,6 +2,11 @@ var gamePieces = {};
 var context = $canvas.getContext('2d');
 var bulletImage = new Image();
 var bullets = [];
+var allBullets = {
+  dean: [],
+  sam: [],
+  cas: []
+}
 var bulletSpeed = 10;
 var bulletWidth = 50;
 var direction = 'right';
@@ -10,6 +15,7 @@ var imageSources = ['/images/1.png', '/images/2.png', '/images/3.png', '/images/
 var tileImages = [];
 var loaded = 0;
 var imageCount = 4;
+
 
 var Sprite = function(name) {
   this.front = [new Image(), new Image(), new Image()];
@@ -116,18 +122,23 @@ function collides(bullet) {
   return false;
 }
 
+
 function drawBullets(){
-  bullets.forEach(function(bullet){
-    context.drawImage(bullet.image, bullet.x, bullet.y, bulletWidth, bulletWidth);
-    bullet.x += bullet.xStep;
-    bullet.y += bullet.yStep;
-    if(collides(bullet)){
-      bullets.flagToRemove = true;
-    }
-  });
-  bullets = bullets.filter(function(bullet){
-    return !bullets.flatToRemove;
+  Object.keys(allBullets).forEach(function(playername){
+    var bullets = allBullets[playername];
+    bullets.forEach(function(bullet){
+      context.drawImage(bullet.image, bullet.x, bullet.y, bulletWidth, bulletWidth);
+      bullet.x += bullet.xStep;
+      bullet.y += bullet.yStep;
+      if(collides(bullet)){
+        bullets.flagToRemove = true;
+      }
+    });
+    bullets = bullets.filter(function(bullet){
+      return !bullets.flatToRemove;
+    })
   })
+
 }
 
 function drawBackground() {
@@ -220,6 +231,7 @@ function fire(){
     image: bulletImage
   };
   bullets.push(bullet);
+  socket.emit(user, bullets);
 }
 
 function handlePlayerAction(e) {
@@ -264,6 +276,10 @@ function handlePlayerAction(e) {
 function callMeAfterAllImagesLoaded() {
     document.body.addEventListener('keydown', handlePlayerAction);
     socket.on('playerUpdate', updatePlayers);
+    socket.on('dean', updatedeanbullets);
+    socket.on('sam', updatesambullets);
+    socket.on('castiel', updatecasbullets);
+
     window.requestAnimationFrame(animate);
     createNewPlayer(user);
 }

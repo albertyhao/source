@@ -58,6 +58,15 @@ function addSockets() {
 			players[user] = player;
 			io.emit('playerUpdate', players);
 		});
+		socket.on('dean', (bullets) => {
+			io.emit('dean', bullets);
+		})
+		socket.on('sam', (bullets) => {
+			io.emit('sam', bullets);
+		})
+		socket.on('castiel', (bullets) => {
+			io.emit('castiel', bullets);
+		})
 
 
 
