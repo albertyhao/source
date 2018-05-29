@@ -36,7 +36,7 @@ function addSockets() {
 		var user = socket.handshake.query.user;
 		if(players[user]) return;
 		players[user] = {
-			x: 0, y:0
+			x: 0, y:0, direction: 'right'
 		}
 		io.emit('playerUpdate', players);
 		io.emit('new message', {username: user, message: `Welcome ${user} to the Family Business.`})

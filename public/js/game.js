@@ -67,7 +67,7 @@ function updatePlayers(players) {
     var gamePiece = gamePieces[playerName];
     gamePiece.x = player.x;
     gamePiece.y = player.y;
-    gamePiece.direction = player.direction;
+    gamePiece.direction = player.direction || 'right';
   });
 
   var gamePieceNames = Object.keys(gamePieces);
@@ -180,16 +180,16 @@ function animate() {
 function findClosestPlayer(user){
   var player = gamePieces[user];
   if(Object.keys(gamePieces).length < 2){
-    if(direction === "left"){
+    if(gamePiece.direction === "left"){
       return {x: 0, y: player.y}
     }
-    if(direction === "right"){
+    if(gamePiece.direction === "right"){
       return {x: $canvas.width, y: player.y}
     }
-    if(direction === "back"){
+    if(gamePiece.direction === "back"){
       return {x: player.x, y: $canvas.height}
     }
-    if(direction === "front"){
+    if(gamePiece.direction === "front"){
       return {x: player.x, y: $canvas.height}
     }
   }
