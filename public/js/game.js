@@ -9,7 +9,6 @@ var allBullets = {
 }
 var bulletSpeed = 10;
 var bulletWidth = 50;
-var direction = 'right';
 var index = 0;
 var imageSources = ['/images/1.png', '/images/2.png', '/images/3.png', '/images/4.png'];
 var tileImages = [];
@@ -74,6 +73,7 @@ function updatePlayers(players) {
     var gamePiece = gamePieces[playerName];
     gamePiece.x = player.x;
     gamePiece.y = player.y;
+    gamePiece.direction = player.direction || 'right';
   });
 
   var gamePieceNames = Object.keys(gamePieces);
@@ -87,7 +87,7 @@ function updatePlayers(players) {
 
 function createNewPlayer(playerName) {
   gamePieces[playerName] = gamePiece;
-  var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2 };
+  var gamePiece = { loaded: false, x: $canvas.width/2, y:$canvas.height/2, direction: "right" };
 
   gamePiece.picture = new Image();
   gamePiece.picture.onload = function() {
@@ -111,6 +111,7 @@ function drawPlayers() {
   playerNames.forEach(function(playerName) {
     var gamePiece = gamePieces[playerName];
     if(!gamePiece.loaded) return;
+    var direction = gamePiece.direction;
     context.drawImage(sprites[playerName][direction][index % 3] ,gamePiece.x, gamePiece.y, pieceWidth, pieceWidth);
   });
 
@@ -190,16 +191,16 @@ function animate() {
 function findClosestPlayer(user){
   var player = gamePieces[user];
   if(Object.keys(gamePieces).length < 2){
-    if(direction === "left"){
+    if(gamePiece.direction === "left"){
       return {x: 0, y: player.y}
     }
-    if(direction === "right"){
+    if(gamePiece.direction === "right"){
       return {x: $canvas.width, y: player.y}
     }
-    if(direction === "back"){
+    if(gamePiece.direction === "back"){
       return {x: player.x, y: $canvas.height}
     }
-    if(direction === "front"){
+    if(gamePiece.direction === "front"){
       return {x: player.x, y: $canvas.height}
     }
   }
@@ -242,25 +243,25 @@ function handlePlayerAction(e) {
     case 'ArrowLeft':
     case 'a':
     gamePiece.x-= step;
-    direction = 'left';
+    gamePiece.direction = 'left';
     index++;
     break;
     case 'ArrowRight':
     case 'd':
     gamePiece.x+= step;
-    direction = 'right';
+    gamePiece.direction = 'right';
     index++;
     break;
     case 'ArrowDown':
     case 's':
     gamePiece.y+= step;
-    direction = 'front';
+    gamePiece.direction = 'front';
     index++;
     break;
     case 'ArrowUp':
     case 'w':
     gamePiece.y-= step;
-    direction = 'back';
+    gamePiece.direction = 'back';
     index++;
     break;
     case 'p':
@@ -269,7 +270,7 @@ function handlePlayerAction(e) {
     default:
     return;
   }
-  socket.emit('playerUpdate', {x: gamePiece.x, y: gamePiece.y});
+  socket.emit('playerUpdate', {x: gamePiece.x, y: gamePiece.y, direction: gamePiece.direction});
 
 }
 
